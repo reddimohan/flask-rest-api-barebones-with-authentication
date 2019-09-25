@@ -3,12 +3,9 @@ from flask import Flask
 from flask_restplus import Api, Resource, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-
-from app.apis.user import api as User
-# from app.apis.leaves import api as Leave
-
+from main.apis.user import api as User
+# from main.apis.leaves import api as Leave
+from main import db_config
 # Init app
 app = Flask(__name__)
 
