@@ -9,7 +9,7 @@ user_register_parser.add_argument('email', type=str, help='User email address', 
 user_register_parser.add_argument('password', type=str, help='Password', location='form')
 user_register_parser.add_argument('reporting_to', type=str, help='Reporting to..', location='form')
 
-@api.route('/register')
+@api.route('/auth/register')
 class UserRegister(Resource):
     """docstring for UserRegister."""
 
@@ -19,7 +19,7 @@ class UserRegister(Resource):
     @api.doc(parser= user_register_parser)
     def post(self):
         if 'email' not in request.form:
-            return api.abort(400, 'Email should not be empty.', status='error')
+            return api.abort(400, 'Email should not be empty.', status='error', status_code= 400)
 
 
 @api.route('/user/<int:user_id>')
@@ -43,7 +43,7 @@ user_login_parser = api.parser()
 user_login_parser.add_argument('email', type=str, help='', location='form')
 user_login_parser.add_argument('password', type=str, help='', location='form')
 
-@api.route('/login')
+@api.route('/auth/login')
 class UserLogin(Resource):
     """docstring for UserLogin."""
 

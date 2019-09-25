@@ -3,9 +3,7 @@ attrs==19.1.0
 certifi==2019.6.16
 Click==7.0
 Flask==1.1.1
-flask-marshmallow==0.10.1
 flask-restplus==0.13.0
-Flask-SQLAlchemy==2.4.0
 itsdangerous==1.1.0
 Jinja2==2.10.1
 jsonschema==3.0.2
