@@ -1,5 +1,6 @@
 import os, sys
 from flask import Flask
+from flask_cors import CORS
 from flask_restplus import Api, Resource, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -8,15 +9,13 @@ coloredlogs.install()
 
 from main.apis.user import api as User
 from main.apis.book import api as Book
-from main import db_config
+# from main import db_config
 
 from main import create_app
 
 # Init app
 app = Flask(__name__)
 
-# basedir = os.path.abspath(os.path.dirname(__file__))
-# sys.path.append(basedir)
 
 # Swagger UI config
 app.config.SWAGGER_UI_JSONEDITOR = True
@@ -29,9 +28,6 @@ api = Api(app, version='1.0', title='API docs',
 
 config_name = os.getenv('FLASK_CONFIG')
 app = create_app(config_name)
-
-# db = db_config.Database(app)
-# print(db.conn)
 
 # @app.before_first_request
 # def create_tables():
