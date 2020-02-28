@@ -5,7 +5,7 @@ from bson.json_util import dumps
 from pprint import pprint
 from bson.objectid import ObjectId
 import urllib.parse
-from apis import utils
+from core import utils
 
 class MongoDB():
 
@@ -19,6 +19,7 @@ class MongoDB():
         self.mongo = PyMongo(app)
     
     def db_config(self):
+        print('mongo_uri')
         app.config["MONGO_DBNAME"] = self.config['DB_NAME']
         username = urllib.parse.quote_plus(self.config['MONGO_USER'])
         password = urllib.parse.quote_plus(self.config['MONGO_PASS'])

@@ -34,6 +34,7 @@ api = Api(app, version='1.0', title='API docs',
 # @app.before_first_request
 # this function is to init the db and realted models
 # def create_tables():
+    # print("Before first statement")
 #     db.create_all()
 
 
