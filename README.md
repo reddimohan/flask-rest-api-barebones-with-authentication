@@ -10,7 +10,8 @@ Python 3.7.4
 - Install `sudo apt-get install libmysqlclient-dev` since `flask-mysqldb` package will be expecting mysql_config
 - install requirements `pip install -r requirements.txt`
 - Run DB migrations after updating the MySQL db details at `main/db_config.py`
-- run `python app.py`
+- `export FLASK_ENV=development` in Linux and uset `set` in windows
+- execute `flask run` to run the application
 
 
 ##### Features
