@@ -1,10 +1,13 @@
 aniso8601==8.0.0
 attrs==19.1.0
+bcrypt==3.1.7
 certifi==2019.6.16
+cffi==1.14.0
 Click==7.0
 coloredlogs==10.0
 Flask==1.1.1
 Flask-Cors==3.0.8
+Flask-PyMongo==2.3.0
 flask-restplus==0.13.0
 gunicorn==19.9.0
 humanfriendly==4.18
@@ -13,7 +16,10 @@ Jinja2==2.10.1
 jsonschema==3.0.2
 MarkupSafe==1.1.1
 marshmallow==3.2.0
+pycparser==2.19
+pymongo==3.10.1
 pyrsistent==0.15.4
 pytz==2019.2
+PyYAML==5.3
 six==1.12.0
 Werkzeug==0.16.0

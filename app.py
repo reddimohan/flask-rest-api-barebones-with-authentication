@@ -4,13 +4,14 @@ from flask_cors import CORS
 from flask_restplus import Api, Resource, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-import coloredlogs, logging
+import coloredlogs, logging as log
 coloredlogs.install()
 
 from main.apis.user import api as User
 from main.apis.book import api as Book
 
 from main import create_app
+from flask_pymongo import PyMongo
 
 # Init app
 app = Flask(__name__)
@@ -29,7 +30,6 @@ api = Api(app, version='1.0', title='API docs',
     description='A simple REST API with user authentication.',
     doc='/docs'
 )
-
 
 # @app.before_first_request
 # this function is to init the db and realted models

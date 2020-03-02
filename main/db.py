@@ -1,6 +1,8 @@
 from flask import current_app as app
+import sys
 
 from flask_pymongo import PyMongo
+from pymongo import MongoClient
 from bson.json_util import dumps
 from pprint import pprint
 from bson.objectid import ObjectId
@@ -10,21 +12,30 @@ from core import utils
 class MongoDB():
 
     def __init__(self):
+        self.log = app.config['log']
         self.utils = utils.Utils()
         self.config = self.utils.get_config()
         dbconfig = self.db_config()
-        # self.connect()
+        self.connect()
     
     def connect(self):
         self.mongo = PyMongo(app)
     
     def db_config(self):
-        print(self.config)
         app.config["MONGO_DBNAME"] = self.config['DB_NAME']
+        app.config["MONGO_AUTH_SOURCE"] = self.config['MONGO_AUTH_SOURCE']
         username = urllib.parse.quote_plus(self.config['MONGO_USER'])
         password = urllib.parse.quote_plus(self.config['MONGO_PASS'])
         mongo_uri = f"mongodb://{username}:{password}@localhost:27017/{self.config['DB_NAME']}?authSource={self.config['MONGO_AUTH_SOURCE']}"
         app.config["MONGO_URI"] = mongo_uri
+        client = MongoClient(mongo_uri)
+
+        try:
+            client.the_database.authenticate(username, password, source=self.config['MONGO_AUTH_SOURCE'])
+        except Exception as e:
+            self.log.error(f"Mongo DB {e} update main/database.yml file")
+            sys.exit(1)
+
 
     def find(self, collection, condition):
         if condition:
