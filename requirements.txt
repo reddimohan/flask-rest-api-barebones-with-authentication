@@ -8,7 +8,7 @@ coloredlogs==10.0
 Flask==1.1.1
 Flask-Cors==3.0.8
 Flask-PyMongo==2.3.0
-flask-restplus==0.13.0
+flask-restplus==0.10.1
 gunicorn==19.9.0
 humanfriendly==4.18
 itsdangerous==1.1.0

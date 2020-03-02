@@ -1,5 +1,5 @@
 from flask_restplus import Resource, Namespace, Resource, fields
-api = Namespace('Books', description='User related APIs')
+api = Namespace('Books', description='Books related APIs')
 from flask import request
 
 
