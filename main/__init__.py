@@ -10,12 +10,14 @@ from .db import MongoDB
 
 
 def create_app(config_name):
-    db = MongoDB()
     config_name = 'dev' if not config_name else config_name
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
-    db.init_app(app)
+    with app.app_context():
+        db = MongoDB()
+    # db.init_app(app)
+    print(db)
 
     @app.route('/')
     def hello_world():

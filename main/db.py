@@ -13,13 +13,13 @@ class MongoDB():
         self.utils = utils.Utils()
         self.config = self.utils.get_config()
         dbconfig = self.db_config()
-        self.connect()
+        # self.connect()
     
     def connect(self):
         self.mongo = PyMongo(app)
     
     def db_config(self):
-        print('mongo_uri')
+        print(self.config)
         app.config["MONGO_DBNAME"] = self.config['DB_NAME']
         username = urllib.parse.quote_plus(self.config['MONGO_USER'])
         password = urllib.parse.quote_plus(self.config['MONGO_PASS'])
