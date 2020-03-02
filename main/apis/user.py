@@ -20,6 +20,8 @@ class UserRegister(Resource):
     def post(self):
         if 'email' not in request.form:
             return api.abort(400, 'Email should not be empty.', status='error', status_code= 400)
+        
+        return request.form
 
 
 @api.route('/user/<int:user_id>')
@@ -66,8 +68,8 @@ class UserList(Resource):
         self.arg = arg
 
     def get(self):
-        print("Get all users")
-        pass
+        return "Get all users"
+
 
 @api.route('/logout')
 class UserLogout(Resource):
