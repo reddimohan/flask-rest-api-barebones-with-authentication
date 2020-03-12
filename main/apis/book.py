@@ -1,6 +1,7 @@
 from flask_restplus import Resource, Namespace, Resource, fields
 api = Namespace('Books', description='Books related APIs')
 from flask import request
+from main.services.book_service import BookService
 
 
 new_book_parser = api.parser()

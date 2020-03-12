@@ -1,14 +1,14 @@
+import os
+import datetime
 from flask import Flask
+from flask_bcrypt import Bcrypt
 
 # local imports
 from config import app_config
 
-# db variable initialization
-# db = SQLAlchemy()
 from .db import MongoDB
 
 import coloredlogs, logging as log
-
 
 def create_app(config_name):
 
@@ -18,10 +18,12 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     app.config["log"] = log
 
+    app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET')
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
+    app.config['flask_bcrypt'] = Bcrypt(app)
+
     with app.app_context():
         db = MongoDB()
-    # db.init_app(app)
-    # print(db)
 
     @app.route('/')
     def hello_world():
