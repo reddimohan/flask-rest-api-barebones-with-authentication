@@ -26,7 +26,7 @@ authorizations = {
 
 # Swagger UI config
 app.config.SWAGGER_UI_JSONEDITOR = True
-app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
+app.config.SWAGGER_UI_DOC_EXPANSION = 'full'
 
 config_name = os.getenv('FLASK_CONFIG')
 app = create_app(config_name)

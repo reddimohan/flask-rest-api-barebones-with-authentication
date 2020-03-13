@@ -18,7 +18,7 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     app.config["log"] = log
 
-    app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET')
+    app.config['JWT_SECRET_KEY'] = 'thisissecret'
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
     app.config['flask_bcrypt'] = Bcrypt(app)
 

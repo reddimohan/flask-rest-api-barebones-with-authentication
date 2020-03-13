@@ -37,31 +37,79 @@ class MongoDB():
             sys.exit(1)
 
 
-    def find(self, collection, condition):
+    def find(self, collection, condition=None):
+        self.log.info(f'Find {condition} from {collection} collection.')
         if condition:
-            results = self.mongo.db[collection].find(condition)
+            try:
+                data = self.mongo.db[collection].find(condition)
+            except Exception as e:
+                self.log.error(f'{e}')
+                data = f'No collection found with {collection}'
+        else:
+            data = self.mongo.db[collection].find()
+
+        results = self.mongo_id_to_str(data)
+
+        return results
+
+    def find_by_id(self, collection, _id):
+        results = None
+        self.log.info(f'Find by _id {_id} from {collection}')
+        if _id:
+            try:
+                results = self.mongo.db[collection].find_one({'_id': ObjectId(_id)})
+                results['_id'] = str(results['_id'])
+            except Exception as e:
+                self.log.error(f'Something went wrong. Error: {e}')
         else:
             results = self.mongo.db[collection].find()
 
-        resp = dumps(results)
-        # document = client.db.collection.find_one({'_id': ObjectId(post_id)})
-        return resp
-    
-    def add(self, obj):
+        return results
+
+    def save(self, collection, obj):
         """
         Takes data obj as input and returns the _id after saving
         """
-        _id = self.mongo.db.collection.save(obj)
+        self.log.info(f'Insert {obj} into {collection}')
+        _id = self.mongo.db[collection].insert_one(obj).inserted_id
+        result = self.find_by_id(collection, _id)
+        
+        if result: result['_id'] = str(result['_id'])
 
-        return _id
+        return result
 
-
-    def update(self, _id, obj):
+    def update(self, collection, _id, obj):
         """
         Updates the row based on _id
         """
+        self.log.info(f'Update {obj} into {collection} by {_id}')
         if _id:
-            # Update record based on _id
-            return _id
+            try:
+                inserted_id = self.mongo.db[collection].update_one({'_id': ObjectId(_id)}, obj)
+                result = self.find_by_id(collection, _id)
+            except Exception as e:
+                self.log.error(f'ID is not valie. err: {e}')
+                result = f'{e}'
+            return result
         else:
             return '_id is required'
+
+    def delete(self, collection, _id):
+        self.log.info(f'Delete from {collection} by {_id}')
+        try:
+            self.mongo.db[collection].delete_one({'_id': ObjectId(_id)})
+            return (True, 'Delete Successfully')
+        except Exception as e:
+            self.log.error(f'Document not deleted using {_id}. err: {e}')
+            return (False, f'Error in Deleting document using {_id}')
+        
+
+    def mongo_id_to_str(self, data):
+        results = []
+        if type(data) == str: return False
+
+        for document in data:
+            document['_id'] = str(document['_id'])
+            results.append(document)
+        
+        return results
