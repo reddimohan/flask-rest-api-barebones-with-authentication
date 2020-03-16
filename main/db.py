@@ -36,7 +36,6 @@ class MongoDB():
             self.log.error(f"Mongo DB {e} update main/database.yml file")
             sys.exit(1)
 
-
     def find(self, collection, condition=None):
         self.log.info(f'Find {condition} from {collection} collection.')
         if condition:

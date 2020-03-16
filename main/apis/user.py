@@ -1,10 +1,15 @@
 from flask_restplus import Resource, Namespace, Resource, fields
 api = Namespace('User', description='User related APIs')
 from main.services.user_service import UserService
-from flask import current_app as app
+from core.utils import Utils
 
 from flask import request, jsonify
-from main.services.jwt_service import token_required
+# from main.services.jwt_service import token_required
+
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 user_register_parser = api.parser()
 user_register_parser.add_argument('name', type=str, help='Name of the user', location='form')
@@ -18,10 +23,12 @@ class UserRegister(Resource):
 
     def __init__(self, arg):
         super(UserRegister, self).__init__(arg)
+        self.utils = Utils()
         self.user_service = UserService()
 
-    @api.doc(parser= user_register_parser, security='token')
-    @token_required
+    @api.doc(parser= user_register_parser)
+    # @api.doc(parser= user_register_parser, security='token')
+    @jwt_required
     def post(self):
         if 'email' not in request.form:
             return api.abort(400, 'Email should not be empty.', status='error', status_code= 400)
@@ -34,12 +41,12 @@ class UserRegister(Resource):
         
         form_obj = request.form.to_dict()
         
-        form_obj['password'] = app.config['flask_bcrypt'].generate_password_hash(form_obj['password'])
+        form_obj['password'] = self.utils.hash_password(form_obj['password'])
 
         new_user = self.user_service.add_user(form_obj)
         if 'password' in new_user: del new_user['password']
 
-        return {'status': 'success', 'data': new_user}, 200
+        return {'status': 'success', 'data': new_user}, 201
 
 
 user_login_parser = api.parser()
@@ -51,7 +58,8 @@ class UserLogin(Resource):
 
     def __init__(self, arg):
         super(UserLogin, self).__init__(arg)
-        self.arg = arg
+        self.utils = Utils()
+        self.user_service = UserService()
 
     @api.doc(parser= user_login_parser)
     def post(self):
@@ -62,10 +70,25 @@ class UserLogin(Resource):
             return api.abort(400, 'Password should not be empty.', status='error', status_code= 400)
         
         form_obj = request.form.to_dict()
-        form_obj['password'] = app.config['flask_bcrypt'].generate_password_hash(form_obj['password'])
-        print(form_obj)
+        email, password = form_obj['email'], form_obj['password']
 
-        return {'t': 't'}, 200
+        form_obj['password'] = self.utils.hash_password(password)
+
+        user = self.user_service.login(email)
+        if user:
+            pass_match = self.utils.check_password(user['password'], password)
+        else:
+            pass_match = None
+
+        if pass_match:
+            del user['password']
+            user['token'] = create_access_token(identity=email)
+            message = 'Login successful.'
+        else:
+            user = ''
+            message = 'Username or Password is wrong.'
+
+        return {'status': 'success', 'data': user, 'message': message}, 200
 
 
 @api.route('/user/<int:user_id>')
@@ -76,7 +99,6 @@ class User(Resource):
         super(User, self).__init__(arg)
         self.arg = arg
 
-    @token_required
     def get(self, user_id: int):
         print(user_id)
         pass

@@ -2,6 +2,10 @@ import os
 import datetime
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 # local imports
 from config import app_config
@@ -19,7 +23,8 @@ def create_app(config_name):
     app.config["log"] = log
 
     app.config['JWT_SECRET_KEY'] = 'thisissecret'
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
+    jwt = JWTManager(app)
+    # app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
     app.config['flask_bcrypt'] = Bcrypt(app)
 
     with app.app_context():
