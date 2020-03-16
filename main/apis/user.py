@@ -4,7 +4,7 @@ from main.services.user_service import UserService
 from core.utils import Utils
 
 from flask import request, jsonify
-# from main.services.jwt_service import token_required
+from main.services.jwt_service import JWTService
 
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -23,12 +23,12 @@ class UserRegister(Resource):
 
     def __init__(self, arg):
         super(UserRegister, self).__init__(arg)
+        self.jwt_service = JWTService()
         self.utils = Utils()
         self.user_service = UserService()
 
     @api.doc(parser= user_register_parser)
-    # @api.doc(parser= user_register_parser, security='token')
-    @jwt_required
+    # @jwt_required # Enable this after deploying the ap, so that registration for doctor is not open
     def post(self):
         if 'email' not in request.form:
             return api.abort(400, 'Email should not be empty.', status='error', status_code= 400)
@@ -41,7 +41,7 @@ class UserRegister(Resource):
         
         form_obj = request.form.to_dict()
         
-        form_obj['password'] = self.utils.hash_password(form_obj['password'])
+        form_obj['password'] = self.jwt_service.hash_password(form_obj['password'])
 
         new_user = self.user_service.add_user(form_obj)
         if 'password' in new_user: del new_user['password']
@@ -58,6 +58,7 @@ class UserLogin(Resource):
 
     def __init__(self, arg):
         super(UserLogin, self).__init__(arg)
+        self.jwt_service = JWTService()
         self.utils = Utils()
         self.user_service = UserService()
 
@@ -72,11 +73,11 @@ class UserLogin(Resource):
         form_obj = request.form.to_dict()
         email, password = form_obj['email'], form_obj['password']
 
-        form_obj['password'] = self.utils.hash_password(password)
+        form_obj['password'] = self.jwt_service.hash_password(password)
 
         user = self.user_service.login(email)
         if user:
-            pass_match = self.utils.check_password(user['password'], password)
+            pass_match = self.jwt_service.check_password(user['password'], password)
         else:
             pass_match = None
 
@@ -91,7 +92,7 @@ class UserLogin(Resource):
         return {'status': 'success', 'data': user, 'message': message}, 200
 
 
-@api.route('/user/<int:user_id>')
+@api.route('/user/<user_id>')
 class User(Resource):
     """docstring for User."""
 
@@ -99,9 +100,10 @@ class User(Resource):
         super(User, self).__init__(arg)
         self.arg = arg
 
+    @jwt_required
     def get(self, user_id: int):
         print(user_id)
-        pass
+        return user_id
         # user = UserModel.find_by_id(user_id)
         # if not user:
         #     return {"message": "User not found."}, 404
