@@ -20,7 +20,7 @@ authorizations = {
     'token': {
         'type': 'apiKey',
         'in': 'header',
-        'name': 'Bearer'
+        'name': 'Authorization'
     }
 }
 
@@ -33,8 +33,8 @@ app = create_app(config_name)
 
 
 # app.wsgi_app = ProxyFix(app.wsgi_app)
-# api = Api(app, authorizations=authorizations, version='1.0', title='API docs',
-api = Api(app, version='1.0', title='API docs',
+api = Api(app, authorizations=authorizations, version='1.0', title='API docs',
+# api = Api(app, version='1.0', title='API docs',
     description='A simple REST API with user authentication.',
     doc='/docs'
 )

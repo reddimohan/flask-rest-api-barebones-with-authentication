@@ -8,7 +8,8 @@ from main.services.jwt_service import JWTService
 
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
+    jwt_refresh_token_required, create_refresh_token,
+    get_jwt_identity, get_raw_jwt
 )
 
 user_register_parser = api.parser()
@@ -83,13 +84,35 @@ class UserLogin(Resource):
 
         if pass_match:
             del user['password']
-            user['token'] = create_access_token(identity=email)
-            message = 'Login successful.'
+            user['token'] = {
+                'access': create_access_token(identity=email),
+                'refresh': create_access_token(identity=email)
+            }
+            message, status_code = 'Login successful.', 200
         else:
             user = ''
-            message = 'Username or Password is wrong.'
+            message, status_code = 'Username or Password is wrong.', 401
 
-        return {'status': 'success', 'data': user, 'message': message}, 200
+        return {'status': 'success', 'data': user, 'msg': message}, status_code
+
+
+
+@api.route('/logout')
+class UserLogout(Resource):
+    """docstring for UserLogout."""
+    def __init__(self, arg):
+        super(UserLogout, self).__init__()
+
+    @jwt_required
+    def post(self):
+        blacklist = set()
+        jti = get_raw_jwt()['jti']
+        print(jti)
+        blacklist.add(jti)
+        
+        return {'status': 'success', 'msg': 'Successfully logged out.'}, 200
+    
+
 
 
 @api.route('/user/<user_id>')
@@ -102,29 +125,40 @@ class User(Resource):
 
     @jwt_required
     def get(self, user_id: int):
-        print(user_id)
-        return user_id
-        # user = UserModel.find_by_id(user_id)
-        # if not user:
-        #     return {"message": "User not found."}, 404
-        # return user.json(), 200
+        current_user = get_jwt_identity()
+        msg = "Current user is " + current_user
+        return msg
 
 
 
+@api.route('/refresh/token')
+class TokenRefresh(Resource):
+    """docstring for TokenRefresh."""
 
+    @jwt_refresh_token_required
+    def post(self):
+        current_user = get_jwt_identity()
+        if current_user:
+            access_token = create_access_token(identity=current_user, fresh=False)
+        else:
+            access_token = 'No user found.'
 
+        return {'status': 'success', 'access_token': access_token}, 200
+@api.route('/users')
+class UserList(Resource):
+    """docstring for UserLogin."""
 
+    def __init__(self, arg):
+        super(UserList, self).__init__(arg)
+        self.arg = arg
 
-# @api.route('/users')
-# class UserList(Resource):
-#     """docstring for UserLogin."""
-
-#     def __init__(self, arg):
-#         super(UserList, self).__init__(arg)
-#         self.arg = arg
-
-#     def get(self):
-#         return "Get all users"
+    # def get(self):
+    #     # you can query to get all the users and return them
+    #     return "Get all users"
+    
+    def delete(self):
+        pass
+        return {'msg': 'Working on it.'}, 200
 
 
 # @api.route('/logout')
