@@ -32,12 +32,12 @@ config_name = os.getenv('FLASK_CONFIG')
 app = create_app(config_name)
 
 
-# app.wsgi_app = ProxyFix(app.wsgi_app)
 api = Api(app, authorizations=authorizations, version='1.0', title='API docs',
-# api = Api(app, version='1.0', title='API docs',
     description='A simple REST API with user authentication.',
     doc='/docs'
 )
+
+app.config['jwt']._set_error_handler_callbacks(api)
 
 # @app.before_first_request
 # this function is to init the db and realted models

@@ -1,6 +1,7 @@
-from flask import request
+from flask import request, jsonify
 from functools import wraps
 from flask import current_app as app
+# from app.auth.blacklist_helper import is_token_revoked
 
 
 class JWTService():
@@ -16,55 +17,52 @@ class JWTService():
     def check_password(self, pass_hash, pass_string):
         return app.config['flask_bcrypt'].check_password_hash(pass_hash, pass_string)
 
+    def __jwt_init(self):
+        jwt = app.config['jwt']
+
+        # @jwt.token_in_blacklist_loader
+        # def check_if_token_revoked(decrypted_token):
+        #     return is_token_revoked(decrypted_token)
 
 
-def __jwt_init():
-    from app.auth.blacklist_helper import is_token_revoked
-    jwt = app.config['jwt']
-
-    @jwt.token_in_blacklist_loader
-    def check_if_token_revoked(decrypted_token):
-        return is_token_revoked(decrypted_token)
-
-
-    @jwt.expired_token_loader
-    def expired_token_callback():
-        return jsonify({
-            'description': 'The token has expired',
-            'error': 'token_expired'
-        }), 401
+        @jwt.expired_token_loader
+        def expired_token_callback():
+            return jsonify({
+                'description': 'The token has expired',
+                'error': 'token_expired'
+            }), 401
 
 
-    @jwt.invalid_token_loader
-    def invalid_token_callback(error):
-        return jsonify({
-            'description': 'Signature verification failed',
-            'error': 'invalid_token'
-        }), 401
+        @jwt.invalid_token_loader
+        def invalid_token_callback(error):
+            return jsonify({
+                'description': 'Signature verification failed',
+                'error': 'invalid_token'
+            }), 401
 
 
-    @jwt.unauthorized_loader
-    def missing_token_callback(error):
-        return jsonify({
-            'description': 'Request does not contain an access token',
-            'error': 'authorization_required'
-        }), 401
+        @jwt.unauthorized_loader
+        def missing_token_callback(error):
+            return jsonify({
+                'description': 'Request does not contain an access token',
+                'error': 'authorization_required'
+            }), 401
 
 
-    @jwt.needs_fresh_token_loader
-    def token_not_fresh_callback():
-        return jsonify({
-            'description': 'The token is not fresh',
-            'error': 'fresh_token_required'
-        }), 401
+        @jwt.needs_fresh_token_loader
+        def token_not_fresh_callback():
+            return jsonify({
+                'description': 'The token is not fresh',
+                'error': 'fresh_token_required'
+            }), 401
 
 
-    @jwt.revoked_token_loader
-    def revoked_token_callback():
-        return jsonify({
-            'description': 'The token has been revoked',
-            'error': 'token_revoked'
-        }), 401
+        @jwt.revoked_token_loader
+        def revoked_token_callback():
+            return jsonify({
+                'description': 'The token has been revoked',
+                'error': 'token_revoked'
+            }), 401
 
 
 # class UserInJWT():
