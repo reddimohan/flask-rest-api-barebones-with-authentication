@@ -16,13 +16,11 @@ class UserService():
         if not user:
             return self.mongo.save(self.collection, user_obj)
         else:
-            return 'User already existed.'
+            return f'User with {user_obj["email"]} already existed.'
 
     def login(self, email):
         """ email as input """
         user = self.mongo.find(self.collection, {'email': email})
-        # print(user)
-        # exit()
         if user:
             user = user[0]
             return user

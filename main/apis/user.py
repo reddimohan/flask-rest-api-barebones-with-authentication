@@ -91,7 +91,7 @@ class UserLogin(Resource):
             message, status_code = 'Login successful.', 200
         else:
             user = ''
-            message, status_code = 'Username or Password is wrong.', 401
+            message, status_code = 'Email or Password is wrong.', 401
 
         return {'status': 'success', 'data': user, 'msg': message}, status_code
 
@@ -111,9 +111,6 @@ class UserLogout(Resource):
         blacklist.add(jti)
         
         return {'status': 'success', 'msg': 'Successfully logged out.'}, 200
-    
-
-
 
 @api.route('/user/<user_id>')
 class User(Resource):
@@ -124,10 +121,17 @@ class User(Resource):
         self.arg = arg
 
     @jwt_required
-    def get(self, user_id: int):
+    def get(self, user_id):
+        """ Get user object based on ID """
         current_user = get_jwt_identity()
         msg = "Current user is " + current_user
-        return msg
+
+        return {'msg': 'Working on it.', 'id': user_id}, 200
+    
+    @jwt_required
+    def delete(self, user_id):
+        """ Delete User based on user_id """
+        return {'msg': 'Working on it.', 'id': user_id}, 200
 
 
 
@@ -156,9 +160,6 @@ class UserList(Resource):
     #     # you can query to get all the users and return them
     #     return "Get all users"
     
-    def delete(self):
-        pass
-        return {'msg': 'Working on it.'}, 200
 
 
 # @api.route('/logout')

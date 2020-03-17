@@ -28,7 +28,7 @@ class JWTService():
         @jwt.expired_token_loader
         def expired_token_callback():
             return jsonify({
-                'description': 'The token has expired',
+                'msg': 'The token has expired',
                 'error': 'token_expired'
             }), 401
 
@@ -36,7 +36,7 @@ class JWTService():
         @jwt.invalid_token_loader
         def invalid_token_callback(error):
             return jsonify({
-                'description': 'Signature verification failed',
+                'msg': 'Signature verification failed',
                 'error': 'invalid_token'
             }), 401
 
@@ -44,7 +44,7 @@ class JWTService():
         @jwt.unauthorized_loader
         def missing_token_callback(error):
             return jsonify({
-                'description': 'Request does not contain an access token',
+                'msg': 'Request does not contain an access token',
                 'error': 'authorization_required'
             }), 401
 
@@ -52,7 +52,7 @@ class JWTService():
         @jwt.needs_fresh_token_loader
         def token_not_fresh_callback():
             return jsonify({
-                'description': 'The token is not fresh',
+                'msg': 'The token is not fresh',
                 'error': 'fresh_token_required'
             }), 401
 
@@ -60,7 +60,7 @@ class JWTService():
         @jwt.revoked_token_loader
         def revoked_token_callback():
             return jsonify({
-                'description': 'The token has been revoked',
+                'msg': 'The token has been revoked',
                 'error': 'token_revoked'
             }), 401
 

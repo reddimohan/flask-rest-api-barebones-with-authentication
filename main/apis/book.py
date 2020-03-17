@@ -19,6 +19,7 @@ class NewBook(Resource):
 
     @api.doc(parser= new_book_parser)
     def post(self):
+        """ Save new book object into database """
         if 'year' not in request.form:
             return api.abort(400, 'year should not be empty.', status='error', status_code= 400)
         
@@ -26,13 +27,14 @@ class NewBook(Resource):
     
     @api.doc(parser= None)
     def get(self):
+        """ Get list of books """
         return "Args"
 
 
 
-book_parser = api.parser()
-book_parser.add_argument('book_id', type=int, location='form')
-@api.route('/book/<int:book_id>')
+# book_parser = api.parser()
+# book_parser.add_argument('book_id', type=int, location='form')
+@api.route('/book/<book_id>')
 class Book(Resource):
     """docstring for Book."""
 
@@ -40,13 +42,14 @@ class Book(Resource):
         super(Book, self).__init__()
         self.arg = arg
 
-    @api.doc(parser= book_parser)
-    def put(self):
-        pass
+    def put(self, book_id):
+        """ Update book based on ID """
+        return book_id
 
-    def get(self):
-        print("Get Books")
-        pass
+    def get(self, book_id):
+        """ Get book object based on ID """
+        return book_id
 
-    def delete(self):
-        pass
+    def delete(self, book_id):
+        """ Delete a book object based on ID. """
+        return book_id
