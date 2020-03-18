@@ -29,6 +29,10 @@ def create_app(config_name):
     app.config['flask_bcrypt'] = Bcrypt(app)
     jwt = app.config['jwt']
 
+    # Swagger UI config
+    app.config.SWAGGER_UI_JSONEDITOR = True
+    app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
+
     with app.app_context():
         db = MongoDB()
     
