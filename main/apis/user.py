@@ -12,7 +12,6 @@ from flask_jwt_extended import (
     get_jwt_identity, get_raw_jwt
 )
 
-
 user_register_model = api.model('SignupModel', {
     'name': fields.String(description="Name of the user", required=True),
     'email': fields.String(description="Email address", required=True),
@@ -32,6 +31,7 @@ class UserRegister(Resource):
     @api.expect(user_register_model)
     # @jwt_required # Enable this after deploying the ap, so that registration for doctor is not open
     def post(self):
+        """ Register new User """
         if 'email' not in request.json or request.json['email'] == '':
             return api.abort(400, 'Email should not be empty.', status='error', status_code= 400)
         
@@ -43,15 +43,12 @@ class UserRegister(Resource):
         
         request.json['password'] = self.jwt_service.hash_password(request.json['password'])
 
-        new_user = self.user_service.add_user(request.json)
-        if 'password' in new_user: del new_user['password']
+        res = self.user_service.add_user(request.json)
+        if 'password' in res: del res['password']
 
-        return {'status': 'success', 'data': new_user}, 201
+        return {'status': 'success', 'res': res, 'message': 'ok'}, 201
 
 
-# user_login_parser = api.parser()
-# user_login_parser.add_argument('email', type=str, help='', location='form')
-# user_login_parser.add_argument('password', type=str, help='', location='form')
 user_login_model = api.model('LoginModel', {
     'email': fields.String(description="Email address", required=True),
     'password': fields.String(description="Password", required=True),
@@ -60,7 +57,6 @@ user_login_model = api.model('LoginModel', {
 @api.route('/auth/login')
 class UserLogin(Resource):
     """docstring for UserLogin."""
-
     def __init__(self, arg):
         super(UserLogin, self).__init__(arg)
         self.jwt_service = JWTService()
@@ -69,6 +65,7 @@ class UserLogin(Resource):
 
     @api.expect(user_login_model)
     def post(self):
+        """ User login API """
         if 'email' not in request.json or request.json['email'] == '':
             return api.abort(400, 'Email should not be empty.', status='error', status_code= 400)
         
@@ -106,7 +103,7 @@ class UserLogout(Resource):
     def __init__(self, arg):
         super(UserLogout, self).__init__()
 
-    @jwt_required
+    # @jwt_required
     def post(self):
         blacklist = set()
         jti = get_raw_jwt()['jti']

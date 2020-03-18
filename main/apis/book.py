@@ -2,13 +2,15 @@ from flask_restplus import Resource, Namespace, Resource, fields
 api = Namespace('Books', description='Books related APIs')
 from flask import request
 from main.services.book_service import BookService
+from core.utils import Utils
 
 
-new_book_parser = api.parser()
-new_book_parser.add_argument('book_name', type=str, help='Book name', location='form')
-new_book_parser.add_argument('author', type=str, help='Name of the Book author', location='form')
-new_book_parser.add_argument('genres', type=str, help='Type of book', location='form')
-new_book_parser.add_argument('year', type=str, help='year of publication', location='form')
+new_book_model = api.model('NewBookModel', {
+    'book_name': fields.String(description="Book name", required=True),
+    'author': fields.String(description="Name of the author", required=True),
+    'genres': fields.String(description="Type of book", required=True),
+    'year': fields.String(description="year of publication", required=True)
+})
 
 @api.route('/book')
 class NewBook(Resource):
@@ -16,14 +18,18 @@ class NewBook(Resource):
 
     def __init__(self, arg):
         super(NewBook, self).__init__(arg)
+        self.utils = Utils()
+        self.book_service = BookService()
 
-    @api.doc(parser= new_book_parser)
+    @api.expect(new_book_model)
     def post(self):
         """ Save new book object into database """
-        if 'year' not in request.form:
+        if 'year' not in request.json:
             return api.abort(400, 'year should not be empty.', status='error', status_code= 400)
         
-        return request.form
+        res, msg, code = self.book_service.add(request.json)
+
+        return {'status': self.utils.http_status(code), 'res': res, 'message': msg}, code
     
     @api.doc(parser= None)
     def get(self):

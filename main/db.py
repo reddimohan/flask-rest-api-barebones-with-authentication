@@ -80,18 +80,20 @@ class MongoDB():
     def update(self, collection, _id, obj):
         """
         Updates the row based on _id
+        Output: (error, message or obj)
         """
+        obj = self.remove_empty_keys(obj)
         self.log.info(f'Update {obj} into {collection} by {_id}')
         if _id:
             try:
                 inserted_id = self.mongo.db[collection].update_one({'_id': ObjectId(_id)}, obj)
-                result = self.find_by_id(collection, _id)
+                result = (False, self.find_by_id(collection, _id))
             except Exception as e:
-                self.log.error(f'ID is not valie. err: {e}')
-                result = f'{e}'
+                self.log.error(f'ID is not valid. err: {e}')
+                result = (True, f'{e}')
             return result
         else:
-            return '_id is required'
+            return (False, '_id is required')
 
     def delete(self, collection, _id):
         self.log.info(f'Delete from {collection} by {_id}')
@@ -102,6 +104,14 @@ class MongoDB():
             self.log.error(f'Document not deleted using {_id}. err: {e}')
             return (False, f'Error in Deleting document using {_id}')
         
+    def remove_empty_keys(self, obj):
+        """
+        Input: Take an object with key, values
+        Ouput: Returns the object by removing keys which has no values
+        """
+        new_obj = {}
+        new_obj['$set'] = {k: v for k, v in obj['$set'].items() if v != ''}
+        return new_obj
 
     def mongo_id_to_str(self, data):
         results = []
