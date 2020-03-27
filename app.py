@@ -1,5 +1,6 @@
 import os, sys
 from flask import Flask
+import pathlib
 from flask_cors import CORS
 from flask_restplus import Api, Resource, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -34,7 +35,7 @@ api = Api(app, authorizations=authorizations, version='1.0', title='API docs',
 )
 
 app.config['jwt']._set_error_handler_callbacks(api)
-
+app.config['ROOT_DIR'] = pathlib.Path(__file__).parent.absolute()
 # @app.before_first_request
 # this function is to init the db and realted models
 # def create_tables():
