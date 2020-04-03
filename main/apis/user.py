@@ -105,10 +105,11 @@ class UserLogout(Resource):
 
     # @jwt_required
     def post(self):
-        blacklist = set()
-        jti = get_raw_jwt()['jti']
-        print(jti)
-        blacklist.add(jti)
+        """ User logout """
+        # blacklist = set()
+        # jti = get_raw_jwt()['jti']
+        # print(jti)
+        # blacklist.add(jti)
         
         return {'status': 'success', 'msg': 'Successfully logged out.'}, 200
 
@@ -118,15 +119,17 @@ class User(Resource):
 
     def __init__(self, arg):
         super(User, self).__init__(arg)
+        self.user_service = UserService()
         self.arg = arg
 
     @jwt_required
     def get(self, user_id):
-        """ Get user object based on ID """
+        """ Get user object based on ID 5e86d84da011b26c2082e0c9 """
         current_user = get_jwt_identity()
         msg = "Current user is " + current_user
+        status, res, msg, code = self.user_service.get_user(user_id)
 
-        return {'msg': 'Working on it.', 'id': user_id}, 200
+        return {'message': status, 'res': res}, code
     
     @jwt_required
     def delete(self, user_id):
@@ -135,19 +138,19 @@ class User(Resource):
 
 
 
-@api.route('/refresh/token')
-class TokenRefresh(Resource):
-    """docstring for TokenRefresh."""
+# @api.route('/refresh/token')
+# class TokenRefresh(Resource):
+#     """docstring for TokenRefresh."""
 
-    @jwt_refresh_token_required
-    def post(self):
-        current_user = get_jwt_identity()
-        if current_user:
-            access_token = create_access_token(identity=current_user, fresh=False)
-        else:
-            access_token = 'No user found.'
+#     @jwt_refresh_token_required
+#     def post(self):
+#         current_user = get_jwt_identity()
+#         if current_user:
+#             access_token = create_access_token(identity=current_user, fresh=False)
+#         else:
+#             access_token = 'No user found.'
 
-        return {'status': 'success', 'access_token': access_token}, 200
+#         return {'status': 'success', 'access_token': access_token}, 200
 
 
 @api.route('/users')
@@ -156,10 +159,12 @@ class UserList(Resource):
 
     def __init__(self, arg):
         super(UserList, self).__init__(arg)
+        self.user_service = UserService()
         self.arg = arg
 
     @jwt_required
     def get(self):
-        # you can query to get all the users and return them
-        return "Get all users"
-    
+        """ Get list of users """
+        users = self.user_service.user_list()
+
+        return {'status': 'success', 'res': users}, 200
