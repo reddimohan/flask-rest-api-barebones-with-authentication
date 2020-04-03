@@ -50,7 +50,7 @@ class MongoDB():
                 data = f'No collection found with {collection}'
         else:
             data = self.mongo.db[collection].find()
-
+        
         results = self.mongo_id_to_str(data)
 
         return results

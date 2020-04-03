@@ -4,6 +4,7 @@ from flask import request
 from main.services.book_service import BookService
 from core.utils import Utils
 
+from flask_jwt_extended import jwt_required
 
 new_book_model = api.model('NewBookModel', {
     'book_name': fields.String(description="Book name", required=True),
@@ -15,47 +16,67 @@ new_book_model = api.model('NewBookModel', {
 @api.route('/book')
 class NewBook(Resource):
     """docstring for NewBook."""
-
     def __init__(self, arg):
         super(NewBook, self).__init__(arg)
         self.utils = Utils()
         self.book_service = BookService()
 
+    @jwt_required
     @api.expect(new_book_model)
     def post(self):
         """ Save new book object into database """
-        if 'year' not in request.json:
+        print(request.json)
+        if 'book_name' not in request.json or request.json['book_name'] == '':
+            return api.abort(400, 'Book name should not be empty.', status='error', status_code= 400)
+        if 'author' not in request.json or request.json['author'] == '':
+            return api.abort(400, 'Autor name should not be empty.', status='error', status_code= 400)
+        if 'genres' not in request.json or request.json['genres'] == '':
+            return api.abort(400, 'Book genre should not be empty.', status='error', status_code= 400)
+        if 'year' not in request.json or request.json['year'] == '':
             return api.abort(400, 'year should not be empty.', status='error', status_code= 400)
         
         res, msg, code = self.book_service.add(request.json)
 
         return {'status': self.utils.http_status(code), 'res': res, 'message': msg}, code
     
+    @jwt_required
     @api.doc(parser= None)
     def get(self):
         """ Get list of books """
-        return "Args"
+        books = self.book_service.books_list()
+        return {'status': 'success', 'res': books}, 200
 
 
 
-# book_parser = api.parser()
-# book_parser.add_argument('book_id', type=int, location='form')
 @api.route('/book/<book_id>')
 class Book(Resource):
     """docstring for Book."""
-
     def __init__(self, arg):
         super(Book, self).__init__()
+        self.book_service = BookService()
         self.arg = arg
 
+    @jwt_required
     def put(self, book_id):
         """ Update book based on ID """
         return book_id
 
+    @jwt_required
     def get(self, book_id):
-        """ Get book object based on ID """
-        return book_id
+        """ Get book object based on book_id """
+        book = self.book_service.get_book(book_id)
+        
+        return {'status': 'success', 'res': book}, 200
 
+    @jwt_required
     def delete(self, book_id):
         """ Delete a book object based on ID. """
-        return book_id
+        if not book_id:
+            api.abort(400, f'book_id is required.', status='error')
+        
+        res, msg = self.book_service.delete_book(book_id)
+
+        if res:
+            return {'status': 'success', 'data': res, 'message': msg}, 200
+        else:
+            return api.abort(400, msg, status='error')

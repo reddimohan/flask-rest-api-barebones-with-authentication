@@ -1,6 +1,7 @@
 from core.utils import Utils
 
 from main.db import MongoDB
+from bson.objectid import ObjectId
 
 class BookService():
     """ doc string for BookService """
@@ -14,4 +15,14 @@ class BookService():
         if not book:
             return (self.mongo.save(self.collection, book_obj), 'Successfully created.', 200)
         else:
-            return ('', 'Book already added to the library.', 400)
+            return ('ok', 'Book already added to the library.', 400)
+
+    def books_list(self):
+        return self.mongo.find(self.collection)
+    
+    def delete_book(self, book_id):
+        return self.mongo.delete(self.collection, book_id)
+    
+    def get_book(self, book_id):
+        condition = {'_id': ObjectId(book_id)}
+        return self.mongo.find(self.collection, condition)

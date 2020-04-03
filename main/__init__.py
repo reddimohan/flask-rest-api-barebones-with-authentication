@@ -24,7 +24,7 @@ def create_app(config_name):
     app.config['JWT_SECRET_KEY'] = '9MZbGqQHaC47SSKyKaTK'
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(minutes=10)
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=10)
     app.config['jwt'] = JWTManager(app)
     app.config['flask_bcrypt'] = Bcrypt(app)
     jwt = app.config['jwt']

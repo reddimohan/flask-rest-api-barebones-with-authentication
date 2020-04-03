@@ -29,7 +29,7 @@ class UserRegister(Resource):
         self.user_service = UserService()
 
     @api.expect(user_register_model)
-    # @jwt_required # Enable this after deploying the ap, so that registration for doctor is not open
+    # @jwt_required
     def post(self):
         """ Register new User """
         if 'email' not in request.json or request.json['email'] == '':
@@ -93,7 +93,7 @@ class UserLogin(Resource):
             user = ''
             message, status_code = 'Email or Password is wrong.', 401
 
-        return {'status': 'success', 'data': user, 'message': message}, status_code
+        return {'status': 'success', 'res': user, 'message': message}, status_code
 
 
 
@@ -148,6 +148,8 @@ class TokenRefresh(Resource):
             access_token = 'No user found.'
 
         return {'status': 'success', 'access_token': access_token}, 200
+
+
 @api.route('/users')
 class UserList(Resource):
     """docstring for UserLogin."""
@@ -156,21 +158,8 @@ class UserList(Resource):
         super(UserList, self).__init__(arg)
         self.arg = arg
 
-    # def get(self):
-    #     # you can query to get all the users and return them
-    #     return "Get all users"
+    @jwt_required
+    def get(self):
+        # you can query to get all the users and return them
+        return "Get all users"
     
-
-
-# @api.route('/logout')
-# class UserLogout(Resource):
-#     """docstring for UserLogout."""
-
-#     def __init__(self, arg):
-#         super(UserLogout, self).__init__(arg)
-#         self.arg = arg
-
-#     # @jwt_required
-#     def post(self):
-#         # jti = get_raw_jwt()["jti"]
-#         pass
