@@ -6,7 +6,7 @@ from core.utils import Utils
 
 from flask_jwt_extended import jwt_required
 
-new_book_model = api.model('NewBookModel', {
+book_model = api.model('BookModel', {
     'book_name': fields.String(description="Book name", required=True),
     'author': fields.String(description="Name of the author", required=True),
     'genres': fields.String(description="Type of book", required=True),
@@ -22,7 +22,7 @@ class NewBook(Resource):
         self.book_service = BookService()
 
     @jwt_required
-    @api.expect(new_book_model)
+    @api.expect(book_model)
     def post(self):
         """ Save new book object into database """
         print(request.json)
@@ -48,7 +48,7 @@ class NewBook(Resource):
 
 
 
-@api.route('/book/<book_id>')
+@api.route('/book/<string:book_id>')
 class Book(Resource):
     """docstring for Book."""
     def __init__(self, arg):
@@ -57,9 +57,15 @@ class Book(Resource):
         self.arg = arg
 
     @jwt_required
+    @api.expect(book_model)
     def put(self, book_id):
-        """ Update book based on ID """
-        return book_id
+        """ Update book based on book_id. 5e86d84da011b26c2082e0c9 """
+        if not book_id:
+            api.abort(400, 'book_id is missing.', status='error')
+
+        status, obj, msg, code = self.book_service.update_book(book_id, request.json)
+
+        return {'status': status, 'data': obj, 'message': msg}, code
 
     @jwt_required
     def get(self, book_id):
@@ -80,3 +86,8 @@ class Book(Resource):
             return {'status': 'success', 'data': res, 'message': msg}, 200
         else:
             return api.abort(400, msg, status='error')
+
+
+class NullableString(fields.String):
+    __schema_type__ = ['string', 'null']
+    __schema_example__ = 'nullable string'

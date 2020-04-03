@@ -23,6 +23,14 @@ class BookService():
     def delete_book(self, book_id):
         return self.mongo.delete(self.collection, book_id)
     
+    def update_book(self, book_id, book_obj):
+        condition = {'$set': book_obj}
+        res, update_count = self.mongo.update(self.collection, book_id, condition)
+
+        if res:
+            return ('success', res, 'ok', 200)
+        return ('error', '', 'Something went wrong.', 400)
+
     def get_book(self, book_id):
         condition = {'_id': ObjectId(book_id)}
         return self.mongo.find(self.collection, condition)

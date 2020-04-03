@@ -83,7 +83,7 @@ class MongoDB():
 
     def update(self, collection, _id, obj):
         """
-        Updates the row based on _id
+        Updates the object based on _id
         Output: (error, message or obj)
         """
         obj = self.remove_empty_keys(obj)
