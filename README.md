@@ -21,3 +21,8 @@ Python 3.7.4
 4. Get user profile
 5. Delete user
 
+
+```sh
+# To see the no. of connections opened in MongoDB
+db.serverStatus().connections
+```

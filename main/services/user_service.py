@@ -1,5 +1,5 @@
 from core.utils import Utils
-
+from flask import current_app as app
 from main.db import MongoDB
 
 class UserService():
@@ -33,7 +33,7 @@ class UserService():
             del res['password']
             return ('success', res, 'ok', 200)
         else:
-            return ('error', '', 'Something went wrong.', 400)
+            return ('error', [], 'Something went wrong.', 400)
 
     def login(self, email):
         """ email as input """
@@ -43,3 +43,7 @@ class UserService():
             return user
         else:
             return None
+    
+    def save_tokens(self, user_tokens, jwt_service):
+        jwt_service.add_token_to_database(user_tokens['access'], app.config['JWT_IDENTITY_CLAIM'])
+        jwt_service.add_token_to_database(user_tokens['refresh'], app.config['JWT_IDENTITY_CLAIM'])

@@ -1,6 +1,9 @@
 from flask import request, jsonify
 from functools import wraps
 from flask import current_app as app
+from main.db import MongoDB
+from flask_jwt_extended import decode_token
+from datetime import datetime
 # from app.auth.blacklist_helper import is_token_revoked
 
 
@@ -8,14 +11,44 @@ class JWTService():
     """ doc str """
     def __init__(self):
         super(JWTService, self).__init__()
-
+        self.mongo = MongoDB()
         self.__jwt_init()
+    
+    def add_token_to_database(self, encoded_access_token, identity_claim):
+        """
+        Adds a token to the database. It is not revoked when it is aded.
+        :param identity_claim: identity_claim is user email here which we set in api/user.py:UserLogin:post
+        """
+        decoded_token = decode_token(encoded_access_token)
+        jti = decoded_token['jti']
+        token_type = decoded_token['type']
+        user_identity = decoded_token[identity_claim]
+        expires = self._epoch_utc_to_datetime(decoded_token['exp'])
+
+        revoked = False
+
+        token_data = {
+            'jti': jti,
+            'token_type': token_type,
+            'user_identity': user_identity,
+            'expires': expires,
+            'revoked': revoked
+        }
+
+        return self.mongo.save('blacklist', token_data)
     
     def hash_password(self, pass_string):
         return app.config['flask_bcrypt'].generate_password_hash(pass_string)
     
     def check_password(self, pass_hash, pass_string):
         return app.config['flask_bcrypt'].check_password_hash(pass_hash, pass_string)
+    
+    def _epoch_utc_to_datetime(self, epoch_utc):
+        """
+        Helper function for converting epoch timestamps (as stored in JWTs) into
+        python datetime objects (which are easier to use with sqlalchemy).
+        """
+        return datetime.fromtimestamp(epoch_utc)
 
     def __jwt_init(self):
         jwt = app.config['jwt']
@@ -63,7 +96,6 @@ class JWTService():
                 'msg': 'The token has been revoked',
                 'error': 'token_revoked'
             }), 401
-
 
 # class UserInJWT():
 #     def __init__(self, user_obj, args=None):

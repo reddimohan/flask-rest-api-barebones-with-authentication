@@ -84,13 +84,14 @@ class UserLogin(Resource):
 
         if pass_match:
             del user['password']
-            user['token'] = {
+            user['tokens'] = {
                 'access': create_access_token(identity=email),
                 'refresh': create_access_token(identity=email)
             }
+            self.user_service.save_tokens(user['tokens'], self.jwt_service)
             message, status_code = 'Login successful.', 200
         else:
-            user = ''
+            user = []
             message, status_code = 'Email or Password is wrong.', 401
 
         return {'status': 'success', 'res': user, 'message': message}, status_code
