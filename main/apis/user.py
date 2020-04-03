@@ -139,19 +139,22 @@ class User(Resource):
 
 
 
-# @api.route('/refresh/token')
-# class TokenRefresh(Resource):
-#     """docstring for TokenRefresh."""
+@api.route('/refresh/token')
+class TokenRefresh(Resource):
+    """docstring for TokenRefresh."""
+    def __init__(self, args):
+        super(TokenRefresh, self).__init__()
+        self.jwt_service = JWTService()
 
-#     @jwt_refresh_token_required
-#     def post(self):
-#         current_user = get_jwt_identity()
-#         if current_user:
-#             access_token = create_access_token(identity=current_user, fresh=False)
-#         else:
-#             access_token = 'No user found.'
+    @jwt_refresh_token_required
+    def post(self):
+        """ Refresh token """
+        current_user = get_jwt_identity()
+        access_token = create_access_token(identity=current_user)
 
-#         return {'status': 'success', 'access_token': access_token}, 200
+        self.user_service.save_tokens(access_token, self.jwt_service)
+
+        return {'status': 'success', 'access_token': access_token}, 200
 
 
 @api.route('/users')
