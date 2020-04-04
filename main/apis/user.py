@@ -5,6 +5,7 @@ from core.utils import Utils
 
 from flask import request, jsonify
 from main.services.jwt_service import JWTService
+from main.services.blacklist_helpers import BlacklistHelper
 
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -25,6 +26,7 @@ class UserRegister(Resource):
     def __init__(self, arg):
         super(UserRegister, self).__init__(arg)
         self.jwt_service = JWTService()
+        self.blacklist = BlacklistHelper()
         self.utils = Utils()
         self.user_service = UserService()
 
@@ -88,7 +90,7 @@ class UserLogin(Resource):
                 'access': create_access_token(identity=email),
                 'refresh': create_access_token(identity=email)
             }
-            self.user_service.save_tokens(user['tokens'], self.jwt_service)
+            self.user_service.save_tokens(user['tokens'])
             message, status_code = 'Login successful.', 200
         else:
             user = []
@@ -103,14 +105,13 @@ class UserLogout(Resource):
     """docstring for UserLogout."""
     def __init__(self, arg):
         super(UserLogout, self).__init__()
+        self.blacklist = BlacklistHelper()
 
-    # @jwt_required
+    @jwt_required
     def post(self):
         """ User logout """
-        # blacklist = set()
-        # jti = get_raw_jwt()['jti']
-        # print(jti)
-        # blacklist.add(jti)
+        current_user = get_jwt_identity()
+        self.blacklist.revoke_token(current_user)
         
         return {'status': 'success', 'msg': 'Successfully logged out.'}, 200
 
@@ -144,7 +145,6 @@ class TokenRefresh(Resource):
     """docstring for TokenRefresh."""
     def __init__(self, args):
         super(TokenRefresh, self).__init__()
-        self.jwt_service = JWTService()
 
     @jwt_refresh_token_required
     def post(self):
@@ -152,14 +152,14 @@ class TokenRefresh(Resource):
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user)
 
-        self.user_service.save_tokens(access_token, self.jwt_service)
+        self.user_service.save_tokens(access_token)
 
         return {'status': 'success', 'access_token': access_token}, 200
 
 
 @api.route('/users')
 class UserList(Resource):
-    """docstring for UserLogin."""
+    """docstring for UserList."""
 
     def __init__(self, arg):
         super(UserList, self).__init__(arg)

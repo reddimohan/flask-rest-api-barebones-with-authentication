@@ -1,12 +1,14 @@
 from core.utils import Utils
 from flask import current_app as app
 from main.db import MongoDB
+from main.services.blacklist_helpers import BlacklistHelper
 
 class UserService():
     """ doc string for UserService """
     def __init__(self):
         super(UserService, self).__init__()
         self.collection = 'users'
+        self.blacklist = BlacklistHelper()
         self.utils = Utils()
         self.mongo = MongoDB()
     
@@ -44,6 +46,6 @@ class UserService():
         else:
             return None
     
-    def save_tokens(self, user_tokens, jwt_service):
-        jwt_service.add_token_to_database(user_tokens['access'], app.config['JWT_IDENTITY_CLAIM'])
-        jwt_service.add_token_to_database(user_tokens['refresh'], app.config['JWT_IDENTITY_CLAIM'])
+    def save_tokens(self, user_tokens):
+        self.blacklist.add_token_to_database(user_tokens['access'], app.config['JWT_IDENTITY_CLAIM'])
+        self.blacklist.add_token_to_database(user_tokens['refresh'], app.config['JWT_IDENTITY_CLAIM'])
