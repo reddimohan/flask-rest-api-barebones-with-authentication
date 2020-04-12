@@ -1,6 +1,6 @@
 
 from flask_jwt_extended import decode_token
-
+from datetime import datetime
 from main.db import MongoDB
 
 
@@ -37,13 +37,14 @@ class BlacklistHelper():
 
     def revoke_token(self, user):
         condition = {'user_identity': user}
-        print(user)
         token = self.mongo.find(self.collection, condition)
-        # token.revoked = True
         if token:
-            print(token)
+            # token.revoked = True
+            # make token.revoked = False and save it into database
+            for t in token: del t['expires']
+            return (200, 'Successfully logged out.')
         else:
-            print('Token not found')
+            return (404, 'Token not found.')
 
     def _epoch_utc_to_datetime(self, epoch_utc):
         """

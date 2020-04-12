@@ -1,7 +1,6 @@
 from flask import request, jsonify
 from functools import wraps
 from flask import current_app as app
-from datetime import datetime
 # from app.auth.blacklist_helper import is_token_revoked
 
 

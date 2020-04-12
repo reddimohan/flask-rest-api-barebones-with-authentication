@@ -88,7 +88,7 @@ class UserLogin(Resource):
             del user['password']
             user['tokens'] = {
                 'access': create_access_token(identity=email),
-                'refresh': create_access_token(identity=email)
+                'refresh': create_refresh_token(identity=email)
             }
             self.user_service.save_tokens(user['tokens'])
             message, status_code = 'Login successful.', 200
@@ -111,9 +111,9 @@ class UserLogout(Resource):
     def post(self):
         """ User logout """
         current_user = get_jwt_identity()
-        self.blacklist.revoke_token(current_user)
+        code, msg = self.blacklist.revoke_token(current_user)
         
-        return {'status': 'success', 'msg': 'Successfully logged out.'}, 200
+        return {'status': 'success', 'msg': msg}, code
 
 @api.route('/user/<user_id>')
 class User(Resource):

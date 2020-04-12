@@ -30,7 +30,7 @@ app = create_app(config_name)
 
 
 api = Api(app, authorizations=authorizations, version='1.0', title='API docs',
-    description='A simple REST API with user authentication.',
+    description='A simple REST API with JWT authentication.',
     doc='/docs'
 )
 

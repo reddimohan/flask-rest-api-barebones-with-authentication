@@ -1,5 +1,9 @@
 #### Flask + MySQL + REST API + Authentication
 
+##### Screenshot
+
+![API docs Screenshot](apidocs.png)
+
 ```sh
 $ python -V
 Python 3.7.4
