@@ -1,4 +1,4 @@
-#### Flask + MySQL + REST API + Authentication
+#### Flask + Mongodb + REST API + Authentication
 
 ##### Screenshot
 
@@ -13,7 +13,6 @@ Python 3.7.4
 - Git clone <project_url>
 <!-- - Install `sudo apt-get install libmysqlclient-dev` since `flask-mysqldb` package will be expecting mysql_config -->
 - install requirements `pip install -r requirements.txt`
-- Run DB migrations after updating the MySQL db details at `main/db_config.py`
 - `export FLASK_ENV=development` in Linux and use `set` in windows
 - execute `flask run` to run the application
 

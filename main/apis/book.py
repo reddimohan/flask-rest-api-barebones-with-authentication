@@ -3,7 +3,6 @@ api = Namespace('Books', description='Books related APIs')
 from flask import request
 from main.services.book_service import BookService
 from core.utils import Utils
-
 from flask_jwt_extended import jwt_required
 
 book_model = api.model('BookModel', {

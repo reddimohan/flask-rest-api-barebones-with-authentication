@@ -10,6 +10,7 @@ coloredlogs.install()
 
 from main.apis.user import api as User
 from main.apis.book import api as Book
+from main.apis.auth import api as Auth
 
 from main import create_app
 from flask_pymongo import PyMongo
@@ -44,6 +45,7 @@ app.config['ROOT_DIR'] = pathlib.Path(__file__).parent.absolute()
 
 
 # Endpoints
+api.add_namespace(Auth, path='/v1')
 api.add_namespace(User, path='/v1')
 api.add_namespace(Book, path='/v1')
 
