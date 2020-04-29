@@ -24,7 +24,6 @@ class NewBook(Resource):
     @api.expect(book_model)
     def post(self):
         """ Save new book object into database """
-        print(request.json)
         if 'book_name' not in request.json or request.json['book_name'] == '':
             return api.abort(400, 'Book name should not be empty.', status='error', status_code= 400)
         if 'author' not in request.json or request.json['author'] == '':
@@ -46,17 +45,23 @@ class NewBook(Resource):
         return {'status': 'success', 'res': books}, 200
 
 
+update_book_model = api.model('BookUpdateModel', {
+    'book_name': fields.String(description="Book name"),
+    'author': fields.String(description="Name of the author"),
+    'genres': fields.String(description="Type of book"),
+    'year': fields.String(description="year of publication")
+})
+
 
 @api.route('/book/<string:book_id>')
 class Book(Resource):
     """docstring for Book."""
     def __init__(self, arg):
-        super(Book, self).__init__()
+        super(Book, self).__init__(arg)
         self.book_service = BookService()
-        self.arg = arg
 
-    @jwt_required
-    @api.expect(book_model)
+    # @jwt_required
+    @api.expect(update_book_model)
     def put(self, book_id):
         """ Update book based on book_id. 5e86d84da011b26c2082e0c9 """
         if not book_id:
@@ -87,6 +92,6 @@ class Book(Resource):
             return api.abort(400, msg, status='error')
 
 
-class NullableString(fields.String):
-    __schema_type__ = ['string', 'null']
-    __schema_example__ = 'nullable string'
+# class NullableString(fields.String):
+#     __schema_type__ = ['string', 'null']
+#     __schema_example__ = 'nullable string'

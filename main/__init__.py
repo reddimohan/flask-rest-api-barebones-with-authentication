@@ -31,7 +31,7 @@ def create_app(config_name):
 
     # Swagger UI config
     app.config.SWAGGER_UI_JSONEDITOR = True
-    app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
+    app.config.SWAGGER_UI_DOC_EXPANSION = 'none' # none, list, full
 
     with app.app_context():
         db = MongoDB()
