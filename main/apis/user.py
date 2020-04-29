@@ -5,7 +5,7 @@ from core.utils import Utils
 from flask import request, jsonify
 from main.services.jwt_service import JWTService
 from main.services.blacklist_helpers import BlacklistHelper
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 user_model = api.model('UpdateUserModel', {
     'name': fields.String(description="Name of the user", required=True),
@@ -19,12 +19,13 @@ class User(Resource):
 
     def __init__(self, arg):
         super(User, self).__init__(arg)
+        self.jwt_service = JWTService()
         self.user_service = UserService()
         self.arg = arg
 
     @jwt_required
     def get(self, user_id):
-        """ Get user object based on _id 5e86d84da011b26c2082e0c9 """
+        """ Get user object by _id. ex: 5e87480bb8db9adc3298a2ad """
         current_user = get_jwt_identity()
         msg = "Current user is " + current_user
         status, res, msg, code = self.user_service.get_user(user_id)
@@ -34,13 +35,29 @@ class User(Resource):
     # @jwt_required
     @api.expect(user_model)
     def put(self, user_id):
-        """ Updated user by _id """
-        print('MO')
+        """ Update User profile by _id """
+        if not user_id:
+            api.abort(400, 'User _id is missing.', status='error')
+
+        if 'password' in request.json and request.json['password'] != '':
+            request.json['password'] = self.jwt_service.hash_password(request.json['password'])
+
+        status, obj, msg, code = self.user_service.update_user(user_id, request.json)
+
+        return {'status': status, 'data': obj, 'message': msg}, code
 
     @jwt_required
     def delete(self, user_id):
         """ Delete User based on user_id """
-        return {'msg': 'Working on it.', 'id': user_id}, 200
+        if not user_id:
+            api.abort(400, f'User _id is required.', status='error')
+
+        res, msg = self.user_service.delete_user(user_id)
+
+        if res:
+            return {'status': 'success', 'data': res, 'message': msg}, 200
+        else:
+            return api.abort(400, msg, status='error')
 
 
 @api.route('/users')

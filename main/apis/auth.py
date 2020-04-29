@@ -124,7 +124,7 @@ class TokenRefresh(Resource):
 
     @jwt_refresh_token_required
     def post(self):
-        """ Refresh token """
+        """ Refresh token - In Progress """
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user)
 

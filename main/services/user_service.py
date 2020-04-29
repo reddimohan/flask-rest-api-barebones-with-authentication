@@ -29,13 +29,29 @@ class UserService():
             return f'User with {user_obj["email"]} already existed.'
 
     def get_user(self, user_id):
-        """ Get Doctor profile by id. ex _id:  """
+        """ Get User profile by id. ex _id:  """
         res = self.mongo.find_by_id(self.collection, user_id)
         if res:
             del res['password']
             return ('success', res, 'ok', 200)
         else:
             return ('error', [], 'Something went wrong.', 400)
+
+    def update_user(self, _id, user_obj):
+        user = self.mongo.find(self.collection, {'email': user_obj['email']})
+        if not user:
+            query = {'$set': user_obj}
+            res, res_obj = self.mongo.update(self.collection, _id, query)
+            if res:
+                del res_obj['password']
+                return ('success', res_obj, 'ok', 200)
+            else:
+                return ('error', '', 'Something went wrong.', 400)
+        else:
+            return ('error', '', f'Email {user_obj["email"]} address already in use.', 400)
+
+    def delete_user(self, user_id):
+        return self.mongo.delete(self.collection, user_id)
 
     def login(self, email):
         """ email as input """

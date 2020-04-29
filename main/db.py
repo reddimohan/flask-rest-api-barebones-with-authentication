@@ -91,10 +91,11 @@ class MongoDB():
         if _id:
             try:
                 inserted_id = self.mongo.db[collection].update_one({'_id': ObjectId(_id)}, obj)
-                result = (False, self.find_by_id(collection, _id))
+                result = (True, self.find_by_id(collection, _id))
             except Exception as e:
                 self.log.error(f'ID is not valid. err: {e}')
-                result = (True, f'{e}')
+                result = (False, f'{e}')
+
             return result
         else:
             return (False, '_id is required')
