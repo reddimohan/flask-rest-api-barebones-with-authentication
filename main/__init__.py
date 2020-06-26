@@ -1,6 +1,7 @@
 import os
 import datetime
 from flask import Flask
+from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -20,6 +21,9 @@ def create_app(config_name):
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config["log"] = log
+
+    cors = CORS(app)
+    app.config['CORS_HEADERS'] = 'Content-Type'
 
     app.config['JWT_SECRET_KEY'] = '9MZbGqQHaC47SSKyKaTK'
     app.config['JWT_BLACKLIST_ENABLED'] = True

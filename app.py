@@ -1,7 +1,6 @@
 import os, sys
 from flask import Flask
 import pathlib
-from flask_cors import CORS
 from flask_restplus import Api, Resource, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
 
