@@ -1,24 +1,31 @@
-from flask_restplus import Resource, Namespace, Resource, fields
-api = Namespace('Authentication', description='Authentication related APIs')
-from main.services.user_service import UserService
-from core.utils import Utils
-from flask import request, jsonify
-from main.services.jwt_service import JWTService
-from main.services.blacklist_helpers import BlacklistHelper
+from flask_restplus import Namespace, Resource, fields
 
+api = Namespace("Authentication", description="Authentication related APIs")
+from flask import request
 from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    jwt_refresh_token_required, create_refresh_token,
-    get_jwt_identity, get_raw_jwt
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_refresh_token_required,
+    jwt_required,
 )
 
-user_register_model = api.model('SignupModel', {
-    'name': fields.String(description="Name of the user", required=True),
-    'email': fields.String(description="Email address", required=True),
-    'password': fields.String(description="password", required=True)
-})
+from core.utils import Utils
+from main.services.blacklist_helpers import BlacklistHelper
+from main.services.jwt_service import JWTService
+from main.services.user_service import UserService
 
-@api.route('/auth/register')
+user_register_model = api.model(
+    "SignupModel",
+    {
+        "name": fields.String(description="Name of the user", required=True),
+        "email": fields.String(description="Email address", required=True),
+        "password": fields.String(description="password", required=True),
+    },
+)
+
+
+@api.route("/auth/register")
 class UserRegister(Resource):
     """docstring for UserRegister."""
 
@@ -33,31 +40,45 @@ class UserRegister(Resource):
     # @jwt_required
     def post(self):
         """ Register new User """
-        if 'email' not in request.json or request.json['email'] == '':
-            return api.abort(400, 'Email should not be empty.', status='error', status_code= 400)
-        
-        if 'password' not in request.json or request.json['password'] == '':
-            return api.abort(400, 'Password should not be empty.', status='error', status_code= 400)
-        
-        if 'name' not in request.json or request.json['name'] == '':
-            return api.abort(400, 'Name should not be empty.', status='error', status_code= 400)
-        
-        request.json['password'] = self.jwt_service.hash_password(request.json['password'])
+        if "email" not in request.json or request.json["email"] == "":
+            return api.abort(
+                400, "Email should not be empty.", status="error", status_code=400
+            )
+
+        if "password" not in request.json or request.json["password"] == "":
+            return api.abort(
+                400, "Password should not be empty.", status="error", status_code=400
+            )
+
+        if "name" not in request.json or request.json["name"] == "":
+            return api.abort(
+                400, "Name should not be empty.", status="error", status_code=400
+            )
+
+        request.json["password"] = self.jwt_service.hash_password(
+            request.json["password"]
+        )
 
         res = self.user_service.add_user(request.json)
-        if 'password' in res: del res['password']
+        if "password" in res:
+            del res["password"]
 
-        return {'status': 'success', 'res': res, 'message': 'ok'}, 201
+        return {"status": "success", "res": res, "message": "ok"}, 201
 
 
-user_login_model = api.model('LoginModel', {
-    'email': fields.String(description="Email address", required=True),
-    'password': fields.String(description="Password", required=True),
-})
+user_login_model = api.model(
+    "LoginModel",
+    {
+        "email": fields.String(description="Email address", required=True),
+        "password": fields.String(description="Password", required=True),
+    },
+)
 
-@api.route('/auth/login')
+
+@api.route("/auth/login")
 class UserLogin(Resource):
     """docstring for UserLogin."""
+
     def __init__(self, arg):
         super(UserLogin, self).__init__(arg)
         self.jwt_service = JWTService()
@@ -67,41 +88,45 @@ class UserLogin(Resource):
     @api.expect(user_login_model)
     def post(self):
         """ User login API """
-        if 'email' not in request.json or request.json['email'] == '':
-            return api.abort(400, 'Email should not be empty.', status='error', status_code= 400)
-        
-        if 'password' not in request.json or request.json['password'] == '':
-            return api.abort(400, 'Password should not be empty.', status='error', status_code= 400)
-        
-        email, password = request.json['email'], request.json['password']
+        if "email" not in request.json or request.json["email"] == "":
+            return api.abort(
+                400, "Email should not be empty.", status="error", status_code=400
+            )
 
-        request.json['password'] = self.jwt_service.hash_password(password)
-        
+        if "password" not in request.json or request.json["password"] == "":
+            return api.abort(
+                400, "Password should not be empty.", status="error", status_code=400
+            )
+
+        email, password = request.json["email"], request.json["password"]
+
+        request.json["password"] = self.jwt_service.hash_password(password)
+
         user = self.user_service.login(email)
         if user:
-            pass_match = self.jwt_service.check_password(user['password'], password)
+            pass_match = self.jwt_service.check_password(user["password"], password)
         else:
             pass_match = None
 
         if pass_match:
-            del user['password']
-            user['tokens'] = {
-                'access': create_access_token(identity=email),
-                'refresh': create_refresh_token(identity=email)
+            del user["password"]
+            user["tokens"] = {
+                "access": create_access_token(identity=email),
+                "refresh": create_refresh_token(identity=email),
             }
-            self.user_service.save_tokens(user['tokens'])
-            message, status_code = 'Login successful.', 200
+            self.user_service.save_tokens(user["tokens"])
+            message, status_code = "Login successful.", 200
         else:
             user = []
-            message, status_code = 'Email or Password is wrong.', 401
+            message, status_code = "Email or Password is wrong.", 401
 
-        return {'status': 'success', 'res': user, 'message': message}, status_code
+        return {"status": "success", "res": user, "message": message}, status_code
 
 
-
-@api.route('/logout')
+@api.route("/logout")
 class UserLogout(Resource):
     """docstring for UserLogout."""
+
     def __init__(self, arg):
         super(UserLogout, self).__init__()
         self.blacklist = BlacklistHelper()
@@ -111,14 +136,14 @@ class UserLogout(Resource):
         """ User logout """
         current_user = get_jwt_identity()
         code, msg = self.blacklist.revoke_token(current_user)
-        
-        return {'status': 'success', 'msg': msg}, code
+
+        return {"status": "success", "msg": msg}, code
 
 
-
-@api.route('/refresh/token')
+@api.route("/refresh/token")
 class TokenRefresh(Resource):
     """docstring for TokenRefresh."""
+
     def __init__(self, args):
         super(TokenRefresh, self).__init__()
 
@@ -130,4 +155,4 @@ class TokenRefresh(Resource):
 
         self.user_service.save_tokens(access_token)
 
-        return {'status': 'success', 'access_token': access_token}, 200
+        return {"status": "success", "access_token": access_token}, 200

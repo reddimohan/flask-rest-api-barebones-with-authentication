@@ -1,12 +1,13 @@
 from flask_restplus import Api
 
-from .user import api as ns1
-from .book import api as ns2
 from .auth import api as ns3
+from .book import api as ns2
+from .user import api as ns1
+
 api = Api(
-    title='',
-    version='1.0',
-    description='API description',
+    title="",
+    version="1.0",
+    description="API description",
 )
 
 api.add_namespace(ns1)
