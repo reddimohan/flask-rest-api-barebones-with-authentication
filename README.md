@@ -85,26 +85,26 @@ conda activate rest_37
 ```sh
 pip install -r requirements.txt
 ```
-5. Install Mongodb
+5. Install Mongodb or You can create the database in the MongoCloud for free, click [here][mongo-cloud] to get free account
 6. Setup password for mongo
     * Go to mongo console by using `mongo`
-    * Execure below queries
+    * Execute below queries
     ```sh
-    use emr
+    use library
     db.createUser(
         {
             user: "username",
             pwd: "password",
-            roles: [ { role: "readWrite", db: "emr" } ]
+            roles: [ { role: "readWrite", db: "library" } ]
         }
     )
     ```
     * Enable authentication in `/etc/mongodb.conf`
     * Restart mongodb service
-    * To connect to mongodb from console, `use mongo emr -u admin -p` and then enter password when prompted
-5. `export FLASK_ENV=development` in Linux and use set in windows
-6. execute `flask run` to run the application
-7. Start the application
+    * To connect to mongodb from console, `use mongo library -u admin -p` and then enter password when prompted
+7. `export FLASK_ENV=development` in Linux and use set in windows
+8. execute `flask run` to run the application
+9. Start the application
 ```sh
 python app.py 
 or
@@ -171,4 +171,5 @@ Project Link: [https://github.com/reddimohan/flask-rest-api-barebones-with-authe
 [license-url]: https://github.com/reddimohan/flask-rest-api-barebones-with-authentication/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/reddimohan
+[mongo-cloud]: https://www.mongodb.com/cloud/atlas/lp/try2-in?utm_source=google&utm_campaign=gs_apac_india_search_brand_atlas_desktop&utm_term=mongo%20db%20cloud&utm_medium=cpc_paid_search&utm_ad=e&utm_ad_campaign_id=6501677905&gclid=EAIaIQobChMImuqyp9v_7QIVljArCh0yBA62EAAYASAAEgJ5ZvD_BwE
 [product-screenshot]: apidocs.png
