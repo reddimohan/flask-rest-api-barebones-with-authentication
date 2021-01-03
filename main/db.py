@@ -22,22 +22,21 @@ class MongoDB:
 
     def db_config(self):
         app.config["MONGO_DBNAME"] = self.config["DB_NAME"]
-        app.config["MONGO_AUTH_SOURCE"] = self.config["MONGO_AUTH_SOURCE"]
+        app.config["HOST"] = self.config["HOST"]
         username = urllib.parse.quote_plus(self.config["MONGO_USER"])
-        # password = urllib.parse.quote_plus(self.config['MONGO_PASS'])
-        password = self.config["MONGO_PASS"]
-        mongo_uri = f"mongodb://{username}:{password}@localhost:27017/{self.config['DB_NAME']}?authSource={self.config['MONGO_AUTH_SOURCE']}"
+        password = urllib.parse.quote_plus(self.config['MONGO_PASS']) # enable if plain password
+        # password = self.config["MONGO_PASS"] # enable this if  pass has no special symbols
+        host = app.config["HOST"]
+        mongo_uri = f"mongodb+srv://{username}:{password}@{host}/{self.config['DB_NAME']}?w=majority"
         app.config["MONGO_URI"] = mongo_uri
         client = MongoClient(mongo_uri)
 
         try:
-            client.the_database.authenticate(
-                username, password, source=self.config["MONGO_AUTH_SOURCE"]
-            )
+            client.server_info()
             self.log.debug("Database connected successfully")
         except Exception as e:
             self.log.error(
-                f"MongoDB Connection Error check main/database.yml file. Error: {e}"
+                f"MongoDB Connection Error check main/database.yml for details. Error: {e}"
             )
             sys.exit(1)
         finally:
