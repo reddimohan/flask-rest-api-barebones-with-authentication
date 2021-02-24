@@ -65,6 +65,9 @@ This is an example of how to list things you need to use the software and how to
 * Python - I am using Anaconda distribution for easy installation of Python and pip
 * Click [here](https://www.digitalocean.com/community/tutorials/how-to-install-the-anaconda-python-distribution-on-ubuntu-18-04) to Install Anaconda
 
+          OR
+* You can download python from https://www.python.org/downloads/ and install
+
 
 
 ### Installation
@@ -85,7 +88,8 @@ conda activate rest_37
 ```sh
 pip install -r requirements.txt
 ```
-5. Install Mongodb or You can create the database in the MongoCloud for free, click [here][mongo-cloud] to get free account
+5. Install Mongodb in local machine OR You can create the database in the MongoCloud for free, click [here][mongo-cloud] to get free account
+    `Note: If you have installed MongoDB locally you can follow 6th step otherwise ignore`
 6. Setup password for mongo
     * Go to mongo console by using `mongo`
     * Execute below queries
@@ -102,9 +106,12 @@ pip install -r requirements.txt
     * Enable authentication in `/etc/mongodb.conf`
     * Restart mongodb service
     * To connect to mongodb from console, `use mongo library -u admin -p` and then enter password when prompted
-7. `export FLASK_ENV=development` in Linux and use set in windows
-8. execute `flask run` to run the application
-9. Start the application
+7. Configure database.yml by following steps
+    * rename `database.yml_sample` to `database.yml`
+    * update DB_NAME, MONGO_USER, MONGO_PASS, HOST (You should have aquired this information from 5th or 6th step)
+8. `export FLASK_ENV=development` in Linux and use set in windows
+9. execute `flask run` to run the application
+10. Start the application
 ```sh
 python app.py 
 or

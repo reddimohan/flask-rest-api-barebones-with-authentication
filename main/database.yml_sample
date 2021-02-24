@@ -2,11 +2,13 @@
 1. You should rename this to database.yml file
 2. You can create new Mongodb cluster for free in MongoDb cloud. 
    After you sign-up create new database, cluster and create new user for the created db.
-3. Once you get the details you can update them here
+      OR
+   You can install MongoDB in you local machine and configure below accordinly 
+3. Once you get the details you can update them below
 #
 
 
 DB_NAME: db_name
 MONGO_USER: mongo_user
 MONGO_PASS: mongo_pwd
-MONGO_AUTH_SOURCE: auth_db_name
+HOST: host
