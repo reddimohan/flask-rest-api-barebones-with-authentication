@@ -107,7 +107,7 @@ pip install -r requirements.txt
     * Restart mongodb service
     * To connect to mongodb from console, `use mongo library -u admin -p` and then enter password when prompted
 7. Configure database.yml by following steps
-    * rename `database.yml_sample` to `database.yml`
+    * rename `main/database.yml_sample` to `main/database.yml`
     * update DB_NAME, MONGO_USER, MONGO_PASS, HOST (You should have aquired this information from 5th or 6th step)
 8. `export FLASK_ENV=development` in Linux and use set in windows
 9. execute `flask run` to run the application
