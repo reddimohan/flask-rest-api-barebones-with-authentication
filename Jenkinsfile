@@ -17,7 +17,7 @@ pipeline {
         stage("Tests") {
             /* Run your testcases */
             steps {
-                
+                sh 'whoami'
             }
         }
     }
