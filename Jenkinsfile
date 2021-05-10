@@ -10,8 +10,10 @@ pipeline {
         stage("Build Image") {
             steps {
                 /* Build the images docker-compose build */
-                sh '/home/mo/anaconda3/bin/conda activate rest_37'
-                sh 'pip install -r requirements.txt'
+                sh '''
+                    #!/bin/bash
+                    /home/mo/anaconda3/bin/conda activate rest_37'
+                    pip install -r requirements.txt'''
             }
         }
         stage("Tests") {
