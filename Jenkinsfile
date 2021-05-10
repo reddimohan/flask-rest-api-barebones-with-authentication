@@ -17,10 +17,8 @@ pipeline {
                 sh '${CONDAPATH} --version'
                 
                 sh '''#!/bin/bash
-                    source ${CONDAPATH}/bin/activate ${CONDAENV}
-                    source ${CONDAPATH}/bin/activate ${CONDAENV}
-                    pip install -r requirements.txt
-                   '''
+                    . ${CONDAPATH}/bin/activate ${CONDAENV}
+                '''
             }
         }
         stage("Tests") {
