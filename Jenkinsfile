@@ -14,5 +14,8 @@ pipeline {
                 sh 'pip install -r requirements.txt'
             }
         }
+        stage("Tests") {
+            /* Run your testcases */
+        }
     }
 }
