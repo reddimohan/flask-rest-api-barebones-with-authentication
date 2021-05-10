@@ -14,6 +14,7 @@ pipeline {
             steps {
                 /* Build the images docker-compose build */
                 sh '''#!/bin/bash
+                    /home/mo/anaconda3/bin/conda --version
                     source ${CONDAPATH}/bin/activate ${CONDAENV}
                     pip install -r requirements.txt
                    '''
