@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage("Clone Repo") {
+        stage("Clone Repository") {
             /* Clone the reposiitory to our workspace */
             steps {
                 checkout scm
@@ -10,7 +10,8 @@ pipeline {
         stage("Build Image") {
             steps {
                 /* Build the images docker-compose build */
-                sh 'whoami'
+                sh 'conda activate rest_37'
+                sh 'pip install -r requirements.txt'
             }
         }
     }
