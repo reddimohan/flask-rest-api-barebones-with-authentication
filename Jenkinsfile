@@ -17,6 +17,9 @@ pipeline {
                 sh '${CONDAPATH} --version'
                 
                 sh '''#!/bin/bash
+                    source ~/anaconda3/etc/profile.d/conda.sh
+                    conda init
+                    conda activate 36
                     . ${CONDAPATH}/bin/activate ${CONDAENV}
                 '''
             }
