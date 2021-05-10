@@ -10,7 +10,7 @@ pipeline {
         stage("Build Image") {
             steps {
                 /* Build the images docker-compose build */
-                whoami
+                sh 'whoami'
             }
         }
     }
