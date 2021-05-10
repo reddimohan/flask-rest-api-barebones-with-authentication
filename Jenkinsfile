@@ -1,3 +1,6 @@
+def CONDAPATH       = "/home/mo/anaconda3/bin/conda"
+def CONDAENV        = "rest_37"
+
 pipeline {
     agent { docker { image 'python:3.7.2' } }
     stages {
@@ -10,10 +13,10 @@ pipeline {
         stage("Build Image") {
             steps {
                 /* Build the images docker-compose build */
-                sh '''
-                    #!/bin/bash
-                    /home/mo/anaconda3/bin/conda activate rest_37'
-                    pip install -r requirements.txt'''
+                sh '''#!/bin/bash
+                    source ${CONDAPATH}/bin/activate ${CONDAENV}
+                    pip install -r requirements.txt
+                   '''
             }
         }
         stage("Tests") {
