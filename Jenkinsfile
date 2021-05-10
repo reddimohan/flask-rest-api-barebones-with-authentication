@@ -2,7 +2,7 @@ def CONDAPATH       = "/home/mo/anaconda3/bin/conda"
 def CONDAENV        = "rest_37"
 
 pipeline {
-    agent { docker { image 'python:3.7.2' } }
+    agent any
     stages {
         stage("Clone Repository") {
             /* Clone the reposiitory to our workspace */
