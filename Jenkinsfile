@@ -17,7 +17,7 @@ pipeline {
                 sh '${CONDAPATH} --version'
                 
                 sh '''#!/bin/bash
-                    /home/mo/anaconda3/bin/conda --version
+                    source ${CONDAPATH}/bin/activate ${CONDAENV}
                     source ${CONDAPATH}/bin/activate ${CONDAENV}
                     pip install -r requirements.txt
                    '''
