@@ -13,7 +13,7 @@ pipeline {
         stage("Build Image") {
             steps {
                 /* Build the images docker-compose build */
-                sh '/home/mo/anaconda3/bin/conda --version'
+                sh '${CONDAPATH} --version'
                 /*
                 sh '''#!/bin/bash
                     /home/mo/anaconda3/bin/conda --version
