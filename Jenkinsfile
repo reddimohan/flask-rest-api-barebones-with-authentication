@@ -16,6 +16,9 @@ pipeline {
         }
         stage("Tests") {
             /* Run your testcases */
+            steps {
+                
+            }
         }
     }
 }
