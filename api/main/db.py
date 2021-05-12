@@ -29,11 +29,10 @@ class MongoDB:
         password = urllib.parse.quote_plus(os.environ.get("MONGODB_PASSWORD")) # enable if plain password
         # password = self.config["MONGO_PASS"] # enable this if  pass has no special symbols
         host = app.config["HOST"]
-        # mongo_uri = f"mongodb://{username}:{password}@{host}:27017/{dbname}"
-        mongo_uri = "mongodb://admin:admin@mongodb:27017/library"
-
+        mongo_uri = f"mongodb://{username}:{password}@{host}:27017/{dbname}"
+        # mongo_uri = "mongodb://admin:admin@mongodb:27017/library"
         print(mongo_uri)
-        print("==="*20)
+        print("===**" * 20)
         app.config["MONGO_URI"] = mongo_uri
         client = MongoClient(mongo_uri)
 

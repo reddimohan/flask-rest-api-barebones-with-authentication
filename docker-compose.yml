@@ -1,78 +1,77 @@
 version: "3.9"
 services: 
-    flak_api:
-        build: api
-        image: flak_api:v1
-        # restart: unless-stopped
-        container_name: flask_API
-        ports: 
-            - "5000:5000"
-        volumes: 
-            - ./api/:/api/
-        environment: 
-            APP_ENV: "prod"
-            APP_DEBUG: "False"
-            APP_PORT: 5000
-            MONGODB_DATABASE: library
-            MONGODB_USERNAME: mohan
-            MONGODB_PASSWORD: mohan
-            MONGODB_HOSTNAME: mongodb
-        # env_file: 
-        #     - .env
-        depends_on: 
-            - mongodb
-        networks:
-            - frontend
-            - backend
     mongodb:
         image: mongo:4.0.8
         container_name: mongodb
         hostname: mongodb
-        restart: unless-stopped
+        # restart: unless-stopped
         command: mongod --auth
-        environment: 
-            MONGO_INITDB_ROOT_USERNAME: admin
-            MONGO_INITDB_ROOT_PASSWORD: admin
-            MONGO_INITDB_DATABASE: library
-            MONGODB_DATA_DIR: /data/db
-            MONDODB_LOG_DIR: /dev/null
-        # env_file: 
-        #     - .env
+        env_file: 
+            - .env
         volumes: 
+            - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
             - ./mongodb_data:/data/db
+        ports: 
+            - '27017-27019:27017-27019'
         networks:
             - backend
-    webserver:
-        image: nginx:alpine
-        container_name: webserver
-        restart: unless-stopped
-        environment: 
-            APP_ENV: "prod"
-            APP_NAME: "webserver"
-            APP_DEBUG: "false"
-            SERVICE_NAME: "webserver"
-        tty: true
-        volumes:
-            - ./nginx_data:/var/log/nginx
-        ports: 
-            - "91:80"
-        depends_on: 
-            - flak_api
-            - mongodb
-        networks: 
-            - frontend
+    
+    # flak_api:
+    #     build: api
+    #     image: flak_api:v1
+    #     # restart: unless-stopped
+    #     container_name: flask_API
+    #     ports: 
+    #         - "5000:5000"
+    #     volumes: 
+    #         - ./api/:/api/
+    #     # environment: 
+    #     #     APP_ENV: "prod"
+    #     #     APP_DEBUG: "False"
+    #     #     APP_PORT: 5000
+    #     #     MONGODB_DATABASE: library
+    #     #     MONGODB_USERNAME: mohan
+    #     #     MONGODB_PASSWORD: mohan
+    #     #     MONGODB_HOSTNAME: mongodb
+    #     # env_file: 
+    #     #     - .env
+    #     depends_on: 
+    #         - mongodb
+    #     networks:
+    #         # - frontend
+    #         - backend
+
+    # webserver:
+    #     image: nginx:alpine
+    #     container_name: webserver
+    #     restart: unless-stopped
+    #     environment: 
+    #         APP_ENV: "prod"
+    #         APP_NAME: "webserver"
+    #         APP_DEBUG: "false"
+    #         SERVICE_NAME: "webserver"
+    #     tty: true
+    #     volumes:
+    #         - ./nginx_data:/var/log/nginx
+    #     ports: 
+    #         - "91:80"
+    #     depends_on: 
+    #         - flak_api
+    #         - mongodb
+    #     networks: 
+    #         - frontend
 
 networks:
-    frontend:
-        driver: bridge
+    # frontend:
+        # driver: bridge
     backend:
         driver: bridge
 
 volumes: 
     mongodb_data:
         driver: local
-    api:
-        driver: local
-    nginx_data:
-        driver: local
+    # api:
+    #     driver: local
+    # nginx_data:
+        # driver: local
     
