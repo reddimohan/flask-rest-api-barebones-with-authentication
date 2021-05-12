@@ -27,23 +27,28 @@
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
-
-* [About the Project](#about-the-project)
-  * [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [License](#license)
-* [Contact](#contact)
+* [Normal Deployment](#normal-deployment)
+  * [About the Project](#about-the-project)
+    * [Built With](#built-with)
+  * [Getting Started](#getting-started)
+    * [Prerequisites](#prerequisites)
+    * [Installation](#installation)
+  * [Roadmap](#roadmap)
+  * [Contributing](#contributing)
+  * [License](#license)
+  * [Contact](#contact)
+* [Docker Deployment & CI/CD](#docker-deployment-cicd)
 
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+### About The Project
 
 [![https://reddimohan.github.io][product-screenshot]]()
+
+
+
+## Normal Deployment
 
 ### Built With
 
@@ -122,6 +127,43 @@ flask run
 # To see the no. of connections opened in MongoDB useful command
 db.serverStatus().connections
 ```
+</br>
+</br>
+</br>
+
+
+## Docker Deployment & CI/CD
+
+1. Clone the project
+2. copy .env_template to .env file and update all your configuration in the route directory
+3. Build the docker images using below command
+```sh
+docker-compose build
+```
+4. Bring up the API server
+```sh
+docker-compose up -d # To run the service in Detach mode
+OR
+docker-compose up # to see the logs
+```
+5. If everything works you can access the API docs on ```http://0.0.0.0:91/docs
+
+### Login to mongodb container
+```sh
+# connect to to interactive terminal <mongodb> is the container name
+docker exec -it mongodb bash
+```
+6. You can login to mogodb CLI using below command
+```sh
+mongo -u username -p 
+```
+You can find the crdentials from the .env file which you have created.
+
+<!-- mongo -u mohan -p mohan --authenticationDatabase library -->
+
+
+
+
 
 
 <!-- ROADMAP -->

@@ -1,3 +1,4 @@
+import os
 import sys
 import urllib.parse
 
@@ -13,7 +14,7 @@ class MongoDB:
     def __init__(self):
         self.log = app.config["log"]
         self.utils = utils.Utils()
-        self.config = self.utils.get_config()
+        # self.config = self.utils.get_config()
         self.db_config()
         self.connect()
 
@@ -21,13 +22,18 @@ class MongoDB:
         self.mongo = PyMongo(app)
 
     def db_config(self):
-        app.config["MONGO_DBNAME"] = self.config["DB_NAME"]
-        app.config["HOST"] = self.config["HOST"]
-        username = urllib.parse.quote_plus(self.config["MONGO_USER"])
-        password = urllib.parse.quote_plus(self.config['MONGO_PASS']) # enable if plain password
+        app.config["MONGO_DBNAME"] = os.environ.get("MONGODB_DATABASE")
+        dbname = os.environ.get("MONGODB_DATABASE")
+        app.config["HOST"] = os.environ.get("MONGODB_HOSTNAME")
+        username = urllib.parse.quote_plus(os.environ.get("MONGODB_USERNAME"))
+        password = urllib.parse.quote_plus(os.environ.get("MONGODB_PASSWORD")) # enable if plain password
         # password = self.config["MONGO_PASS"] # enable this if  pass has no special symbols
         host = app.config["HOST"]
-        mongo_uri = f"mongodb+srv://{username}:{password}@{host}/{self.config['DB_NAME']}?w=majority"
+        # mongo_uri = f"mongodb://{username}:{password}@{host}:27017/{dbname}"
+        mongo_uri = "mongodb://admin:admin@mongodb:27017/library"
+
+        print(mongo_uri)
+        print("==="*20)
         app.config["MONGO_URI"] = mongo_uri
         client = MongoClient(mongo_uri)
 
@@ -36,7 +42,7 @@ class MongoDB:
             self.log.debug("Database connected successfully")
         except Exception as e:
             self.log.error(
-                f"MongoDB Connection Error check main/database.yml for details. Error: {e}"
+                f"MongoDB Connection Error check ./.env for details. Error: {e}"
             )
             sys.exit(1)
         finally:
