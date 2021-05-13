@@ -4,7 +4,7 @@ import pathlib
 from flask_restplus import Api, Resource, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from core.utils import Utils
+# from core.utils import Utils
 
 import coloredlogs, logging as log
 coloredlogs.install()
@@ -52,5 +52,4 @@ api.add_namespace(Book, path='/v1')
 
 # Run Server
 if __name__ == '__main__':
-    Utils.validations()
     app.run()

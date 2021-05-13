@@ -118,9 +118,8 @@ pip install -r requirements.txt
 9. execute `flask run` to run the application
 10. Start the application
 ```sh
-python app.py 
-or
-flask run
+# python app.p
+gunicorn app:app
 ```
 
 ```sh

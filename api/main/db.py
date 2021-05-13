@@ -1,6 +1,7 @@
 import os
 import sys
 import urllib.parse
+from dotenv import load_dotenv
 
 from bson.objectid import ObjectId
 from flask import current_app as app
@@ -14,6 +15,7 @@ class MongoDB:
     def __init__(self):
         self.log = app.config["log"]
         self.utils = utils.Utils()
+        load_dotenv("../.env")
         # self.config = self.utils.get_config()
         self.db_config()
         self.connect()
@@ -25,14 +27,12 @@ class MongoDB:
         app.config["MONGO_DBNAME"] = os.environ.get("MONGODB_DATABASE")
         dbname = os.environ.get("MONGODB_DATABASE")
         app.config["HOST"] = os.environ.get("MONGODB_HOSTNAME")
-        username = urllib.parse.quote_plus(os.environ.get("MONGODB_USERNAME"))
-        password = urllib.parse.quote_plus(os.environ.get("MONGODB_PASSWORD")) # enable if plain password
-        # password = self.config["MONGO_PASS"] # enable this if  pass has no special symbols
+        username = os.environ.get("MONGODB_USERNAME")
+        # password = urllib.parse.quote_plus(os.environ.get("MONGODB_PASSWORD")) # enable if plain password
+        password = os.environ.get("MONGODB_PASSWORD") # enable this if  pass has no special symbols
         host = app.config["HOST"]
         mongo_uri = f"mongodb://{username}:{password}@{host}:27017/{dbname}"
-        # mongo_uri = "mongodb://admin:admin@mongodb:27017/library"
-        print(mongo_uri)
-        print("===**" * 20)
+
         app.config["MONGO_URI"] = mongo_uri
         client = MongoClient(mongo_uri)
 

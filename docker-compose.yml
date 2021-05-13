@@ -16,62 +16,54 @@ services:
         networks:
             - backend
     
-    # flak_api:
-    #     build: api
-    #     image: flak_api:v1
-    #     # restart: unless-stopped
-    #     container_name: flask_API
-    #     ports: 
-    #         - "5000:5000"
-    #     volumes: 
-    #         - ./api/:/api/
-    #     # environment: 
-    #     #     APP_ENV: "prod"
-    #     #     APP_DEBUG: "False"
-    #     #     APP_PORT: 5000
-    #     #     MONGODB_DATABASE: library
-    #     #     MONGODB_USERNAME: mohan
-    #     #     MONGODB_PASSWORD: mohan
-    #     #     MONGODB_HOSTNAME: mongodb
-    #     # env_file: 
-    #     #     - .env
-    #     depends_on: 
-    #         - mongodb
-    #     networks:
-    #         # - frontend
-    #         - backend
+    flak_api:
+        build: api
+        image: flak_api:v1
+        # restart: unless-stopped
+        container_name: flask_API
+        ports: 
+            - "5000:5000"
+        volumes: 
+            - ./api/:/api/
+        env_file: 
+            - .env
+        depends_on: 
+            - mongodb
+        networks:
+            - frontend
+            - backend
 
-    # webserver:
-    #     image: nginx:alpine
-    #     container_name: webserver
-    #     restart: unless-stopped
-    #     environment: 
-    #         APP_ENV: "prod"
-    #         APP_NAME: "webserver"
-    #         APP_DEBUG: "false"
-    #         SERVICE_NAME: "webserver"
-    #     tty: true
-    #     volumes:
-    #         - ./nginx_data:/var/log/nginx
-    #     ports: 
-    #         - "91:80"
-    #     depends_on: 
-    #         - flak_api
-    #         - mongodb
-    #     networks: 
-    #         - frontend
+    webserver:
+        image: nginx:alpine
+        container_name: webserver
+        restart: unless-stopped
+        environment: 
+            APP_ENV: "prod"
+            APP_NAME: "webserver"
+            APP_DEBUG: "false"
+            SERVICE_NAME: "webserver"
+        tty: true
+        volumes:
+            - ./nginx_data:/var/log/nginx
+        ports: 
+            - "91:80"
+        depends_on: 
+            - flak_api
+            - mongodb
+        networks: 
+            - frontend
 
 networks:
-    # frontend:
-        # driver: bridge
+    frontend:
+        driver: bridge
     backend:
         driver: bridge
 
 volumes: 
     mongodb_data:
         driver: local
-    # api:
-    #     driver: local
-    # nginx_data:
-        # driver: local
+    api:
+        driver: local
+    nginx_data:
+        driver: local
     
