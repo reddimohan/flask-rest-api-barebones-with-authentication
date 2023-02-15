@@ -36,5 +36,5 @@ PyYAML==5.3
 six==1.12.0
 toml==0.10.2
 typing-extensions==3.7.4.3
-Werkzeug==0.16.0
+Werkzeug==2.2.3
 zipp==3.4.0
