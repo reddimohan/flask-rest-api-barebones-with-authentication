@@ -10,6 +10,10 @@ pipeline {
         }
         stage('Linting in Dev ENV') {
             steps {
+                sh """
+                pip install flake8
+                flake8
+                """
                 echo "Testing"
             }
         }
