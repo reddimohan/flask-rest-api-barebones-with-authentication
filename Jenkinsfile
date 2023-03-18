@@ -11,8 +11,6 @@ pipeline {
         stage('Linting in Dev ENV') {
             steps {
                 sh """
-                virtualenv venv --distribute
-                . venv/bin/activate 
                 pip install flake8
                 flake8
                 """
