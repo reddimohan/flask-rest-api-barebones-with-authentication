@@ -1,5 +1,5 @@
 pipeline {
-    agent none 
+    agent any 
     stages {
         stage('Checkout SCM') {
             steps {
@@ -10,6 +10,11 @@ pipeline {
         }
         stage('Linting in Dev ENV') {
             steps {
+                sh """
+                source venv/bin/activate
+                pip install flake8
+                flake8
+                """
                 echo "Testing"
             }
         }
